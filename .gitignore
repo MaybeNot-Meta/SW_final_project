@@ -1,0 +1,23 @@
+
+# 운영체제 임시 파일
+.DS_Store
+Thumbs.db
+
+# VS Code 및 IDE 개인 설정
+.vscode/
+.idea/
+
+# 패키지 설치 파일
+node_modules/
+
+# 빌드 및 테스트 결과
+dist/
+coverage/
+
+# 환경변수 및 비밀 정보
+.env
+.env.*
+!.env.example
+
+# 로그 파일
+*.log

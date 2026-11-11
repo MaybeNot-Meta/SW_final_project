@@ -1,0 +1,90 @@
+
+/* ======================================
+   공통 디자인 토큰
+   색상, 글자 크기, 여백 등의 기준
+====================================== */
+
+:root {
+
+  /* 브랜드 색상 */
+  --color-primary: #587BE8;
+  --color-primary-hover: #4269DA;
+  --color-primary-soft: #EAF0FF;
+  --color-lilac: #BEADEB;
+  --color-lilac-soft: #F3ECFF;
+
+  /* 배경 색상 */
+  --color-bg: #FFFFFF;
+  --color-surface: #FFFFFF;
+  --color-bg-soft: #F4F8FF;
+  --color-neutral-soft: #F7F9FC;
+
+  /* 텍스트 색상 */
+  --color-text: #252A40;
+  --color-text-sub: #737D93;
+  --color-text-muted: #9AA4B8;
+  --color-on-primary: #FFFFFF;
+
+  /* 테두리 */
+  --color-border: #E5EAF4;
+
+  /* 상태 색상 */
+  --color-success: #287C5D;
+  --color-success-soft: #E4F6ED;
+
+  --color-warning: #A96B21;
+  --color-warning-soft: #FFF2DE;
+
+  --color-danger: #B63F57;
+  --color-danger-soft: #FBE8EE;
+
+  --color-backdrop: #202C4966;
+
+  /* 차트 색상 */
+  --color-chart-mine: #597BE8;
+  --color-chart-need: #C8ACEF;
+
+  /* 그라데이션 */
+  --gradient-hero: linear-gradient(
+    115deg,
+    #EAF1FF 0%,
+    #F1EEFF 60%,
+    #F9EDFC 100%
+  );
+
+  --gradient-feature: linear-gradient(
+    125deg,
+    #6786EB 0%,
+    #8E95E5 100%
+  );
+
+  /* 글자 크기 */
+  --fs-display: 40px;
+  --fs-h1: 28px;
+  --fs-h2: 22px;
+  --fs-h3: 18px;
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-caption: 12px;
+
+  /* 간격 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* 둥근 모서리 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* 그림자 */
+  --shadow-card: 0 4px 20px #344C8010;
+  --shadow-hover: 0 10px 32px #344C8026;
+
+}
