@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+        content="흩어진 경험을 나만의 포트폴리오로 연결하는 서비스">
+
+  <title>시작하기 · myfo</title>
+
+  <!-- Pretendard 오픈소스 폰트 -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+  >
+
+  <!-- 공통 디자인 -->
+  <link rel="stylesheet" href="common/tokens.css">
+  <link rel="stylesheet" href="common/base.css">
+
+  <!-- 홈 전용 디자인 -->
+  <link rel="stylesheet" href="css/home.css">
+</head>
+
+<body>
+
+  <!-- 공통 헤더 -->
+  <div id="header"></div>
+
+  <main id="home-app">
+
+    <!-- ===================================
+         첫 방문 사용자: 온보딩
+    ==================================== -->
+
+    <section
+      id="onboarding"
+      class="home-onboarding"
+      aria-labelledby="home-main-title"
+    >
+      <div class="container">
+
+        <!-- 상단 소개 -->
+        <div class="home-intro">
+
+          <span class="home-eyebrow">
+            <i data-lucide="sparkles"></i>
+            나의 가능성을 발견하는 공간
+          </span>
+
+          <h1 id="home-main-title">
+            흩어진 경험을,<br>
+            <span class="home-highlight">
+              나만의 이야기로.
+            </span>
+          </h1>
+
+          <p class="home-intro-desc">
+            포트폴리오 작성, 어디서부터 시작해야 할지 막막한가요?<br>
+            나의 상황에 맞는 첫걸음부터 시작해 보세요.
+          </p>
+
+        </div>
+
+        <div class="home-onboarding-layout">
+
+          <!-- 서비스 소개 카드 -->
+          <aside class="home-preview">
+
+            <div class="home-preview-content">
+
+              <div class="home-preview-top">
+                <span>MY PORTFOLIO</span>
+                <i data-lucide="sparkles"></i>
+              </div>
+
+              <div class="home-preview-icon">
+                <i data-lucide="layers-3"></i>
+              </div>
+
+              <h2>
+                작은 경험도<br>
+                나만의 강점이 될 수 있어요.
+              </h2>
+
+              <p>
+                무엇을 해왔는지 함께 정리하고,<br>
+                포트폴리오로 연결해 보세요.
+              </p>
+
+              <div class="home-preview-list">
+
+                <div class="home-preview-list-item">
+                  <i data-lucide="check-circle-2"></i>
+                  경험 발견하기
+                </div>
+
+                <div class="home-preview-list-item">
+                  <i data-lucide="check-circle-2"></i>
+                  역량 연결하기
+                </div>
+
+                <div class="home-preview-list-item">
+                  <i data-lucide="check-circle-2"></i>
+                  포트폴리오 완성하기
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- CSS로 만드는 배경 장식 -->
+            <div
+              class="home-decoration home-decoration-one"
+              aria-hidden="true"
+            ></div>
+
+            <div
+              class="home-decoration home-decoration-two"
+              aria-hidden="true"
+            ></div>
+
+          </aside>
+
+          <!-- 온보딩 입력 카드 -->
+          <section class="card home-form-card">
+
+            <div class="home-form-heading">
+
+              <span class="home-step-label">
+                STEP 01 · 시작하기
+              </span>
+
+              <h2>나에 대해 알려주세요.</h2>
+
+              <p class="text-sub text-small">
+                현재 상황을 선택하면 알맞은 시작 과정을 안내해 드릴게요.
+              </p>
+
+            </div>
+
+            <form id="home-onboarding-form" novalidate>
+
+              <!-- 닉네임 입력 -->
+              <div class="field home-nickname-field">
+
+                <label for="home-nickname" class="label">
+                  닉네임
+                </label>
+
+                <input
+                  id="home-nickname"
+                  name="nickname"
+                  class="input"
+                  type="text"
+                  placeholder="사용할 닉네임을 입력해 주세요"
+                  maxlength="20"
+                  autocomplete="nickname"
+                  required
+                  aria-describedby="home-nickname-help home-nickname-error"
+                >
+
+                <p
+                  id="home-nickname-help"
+                  class="help"
+                >
+                  서비스에서 사용할 이름이에요.
+                </p>
+
+                <p
+                  id="home-nickname-error"
+                  class="error"
+                  role="alert"
+                  hidden
+                ></p>
+
+              </div>
+
+              <!-- 사용자 유형 선택 -->
+              <fieldset class="home-type-fieldset">
+
+                <legend class="home-field-title">
+                  지금 어떤 상황에 가까우신가요?
+                </legend>
+
+                <p class="home-field-description">
+                  두 가지 중 하나를 선택해 주세요.
+                </p>
+
+                <div class="home-type-grid">
+
+                  <!-- 유형 1 -->
+                  <label class="home-type-card">
+
+                    <input
+                      type="radio"
+                      name="home-user-type"
+                      value="1"
+                      class="home-type-input"
+                    >
+
+                    <span class="home-type-icon">
+                      <i data-lucide="compass"></i>
+                    </span>
+
+                    <span class="home-type-number">
+                      TYPE 01
+                    </span>
+
+                    <strong class="home-type-title">
+                      해온 게 별로 없어요.
+                    </strong>
+
+                    <span class="home-type-description">
+                      어떤 경험부터 쌓아야 할지<br>
+                      아직 잘 모르겠어요.
+                    </span>
+
+                    <span class="home-type-check" aria-hidden="true">
+                      <i data-lucide="check"></i>
+                    </span>
+
+                  </label>
+
+                  <!-- 유형 2 -->
+                  <label class="home-type-card">
+
+                    <input
+                      type="radio"
+                      name="home-user-type"
+                      value="2"
+                      class="home-type-input"
+                    >
+
+                    <span class="home-type-icon home-type-icon-lilac">
+                      <i data-lucide="notebook-pen"></i>
+                    </span>
+
+                    <span class="home-type-number">
+                      TYPE 02
+                    </span>
+
+                    <strong class="home-type-title">
+                      경험은 있는데 정리가 안 돼요.
+                    </strong>
+
+                    <span class="home-type-description">
+                      경험을 어떻게 정리하고<br>
+                      표현해야 할지 모르겠어요.
+                    </span>
+
+                    <span class="home-type-check" aria-hidden="true">
+                      <i data-lucide="check"></i>
+                    </span>
+
+                  </label>
+
+                </div>
+
+                <p
+                  id="home-type-error"
+                  class="error home-type-error"
+                  role="alert"
+                  hidden
+                ></p>
+
+              </fieldset>
+
+              <!-- 유형 1에게만 표시하는 관심 태그 -->
+              <section
+                id="home-tag-step"
+                class="home-tag-step"
+                aria-labelledby="home-tag-title"
+                hidden
+              >
+
+                <div class="home-tag-heading">
+
+                  <h3 id="home-tag-title">
+                    어떤 분야에 관심이 있나요?
+                  </h3>
+
+                  <p class="text-sub text-small">
+                    관심 있는 분야를 2~3개 선택해 주세요.
+                  </p>
+
+                </div>
+
+                <div
+                  id="home-tag-list"
+                  class="home-tag-list"
+                  role="group"
+                  aria-labelledby="home-tag-title"
+                ></div>
+
+                <div class="home-tag-bottom">
+
+                  <span
+                    id="home-tag-count"
+                    class="text-caption"
+                    aria-live="polite"
+                  >
+                    0 / 3개 선택
+                  </span>
+
+                </div>
+
+                <p
+                  id="home-tag-error"
+                  class="error"
+                  role="alert"
+                  hidden
+                ></p>
+
+              </section>
+
+              <!-- 저장 버튼 -->
+              <div class="home-submit-area">
+
+                <p
+                  id="home-form-error"
+                  class="error"
+                  role="alert"
+                  hidden
+                ></p>
+
+                <button
+                  type="submit"
+                  id="home-submit-button"
+                  class="btn btn-primary btn-lg home-submit"
+                >
+                  <span id="home-submit-label">
+                    시작하기
+                  </span>
+
+                  <i data-lucide="arrow-right"></i>
+
+                </button>
+
+                <p class="home-save-notice">
+                  입력한 정보는 현재 브라우저에 저장돼요.
+                </p>
+
+              </div>
+
+            </form>
+
+          </section>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================
+         사용자 등록 완료: 메인 홈
+         STEP 5에서 본격적으로 개발
+    ==================================== -->
+
+    <section
+      id="home-dashboard"
+      class="home-dashboard"
+      aria-labelledby="home-dashboard-title"
+      hidden
+    >
+
+      <div class="container">
+
+        <div class="home-dashboard-hero">
+
+          <span class="home-eyebrow">
+            <i data-lucide="sparkles"></i>
+            나의 포트폴리오 여정
+          </span>
+
+          <h1 id="home-dashboard-title">
+            환영해요!
+          </h1>
+
+          <p>
+            첫 설정을 완료했어요.<br>
+            이제 나의 경험을 하나씩 기록하고 정리해 보세요.
+          </p>
+
+        </div>
+
+        <div class="card home-welcome-card">
+
+          <div class="home-welcome-heading">
+
+            <i data-lucide="circle-check"></i>
+
+            <h2>시작할 준비가 되었어요.</h2>
+
+          </div>
+
+          <p class="text-sub">
+            사용자 정보가 정상적으로 저장되었어요.
+            다음 개발 단계에서 메인 홈의 주요 기능을 추가할 예정이에요.
+          </p>
+
+          <div id="home-user-summary" class="home-user-summary">
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Lucide 오픈소스 아이콘 -->
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+
+  <!-- 공통 데이터 및 기능 -->
+  <script src="data/tags.js"></script>
+  <script src="common/storage.js"></script>
+  <script src="common/header.js"></script>
+
+  <!-- 온보딩 전용 기능 -->
+  <script src="js/home.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,647 @@
+
+/* ======================================
+   온보딩 및 메인 홈 디자인
+   공통 디자인 토큰을 사용합니다.
+====================================== */
+
+/* 숨김 상태 */
+.home-onboarding[hidden],
+.home-dashboard[hidden],
+.home-tag-step[hidden],
+.home-onboarding .error[hidden] {
+  display: none !important;
+}
+
+/* ======================================
+   1. 온보딩 전체 영역
+====================================== */
+
+.home-onboarding {
+  min-height: 100vh;
+  padding: var(--space-8) 0;
+  background: var(--color-bg-soft);
+}
+
+/* 상단 서비스 소개 */
+
+.home-intro {
+  margin-bottom: var(--space-7);
+  text-align: center;
+}
+
+.home-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+
+  padding: var(--space-2) var(--space-4);
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  border-radius: var(--radius-full);
+
+  font-size: var(--fs-caption);
+  font-weight: 700;
+}
+
+.home-eyebrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.home-intro h1 {
+  margin: var(--space-5) 0;
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.home-highlight {
+  color: var(--color-primary);
+}
+
+.home-intro-desc {
+  margin-bottom: 0;
+  color: var(--color-text-sub);
+  font-size: var(--fs-body);
+  line-height: 1.9;
+}
+
+/* ======================================
+   2. 온보딩 2열 레이아웃
+====================================== */
+
+.home-onboarding-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+/* 왼쪽 서비스 소개 카드 */
+
+.home-preview {
+  position: relative;
+  overflow: hidden;
+
+  min-height: 520px;
+  padding: var(--space-7) var(--space-6);
+
+  background: var(--color-primary-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.home-preview-content {
+  position: relative;
+  z-index: 2;
+}
+
+.home-preview-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: var(--color-primary);
+  font-size: var(--fs-caption);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.home-preview-top svg {
+  width: 19px;
+  height: 19px;
+}
+
+.home-preview-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 72px;
+  height: 72px;
+
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-6);
+
+  background: var(--color-surface);
+  color: var(--color-primary);
+
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.home-preview-icon svg {
+  width: 35px;
+  height: 35px;
+}
+
+.home-preview h2 {
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-h2);
+  line-height: 1.5;
+  letter-spacing: -0.03em;
+}
+
+.home-preview p {
+  color: var(--color-text-sub);
+  font-size: var(--fs-small);
+  line-height: 1.9;
+}
+
+.home-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+
+  border-top: 1px solid var(--color-border);
+}
+
+.home-preview-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.home-preview-list-item svg {
+  width: 19px;
+  height: 19px;
+  color: var(--color-primary);
+}
+
+/* 외부 이미지를 사용하지 않는 CSS 장식 */
+
+.home-decoration {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.home-decoration-one {
+  width: 240px;
+  height: 240px;
+
+  right: -110px;
+  top: 45px;
+
+  background: var(--color-lilac);
+  opacity: 0.18;
+}
+
+.home-decoration-two {
+  width: 180px;
+  height: 180px;
+
+  left: -100px;
+  bottom: -65px;
+
+  background: var(--color-surface);
+  opacity: 0.7;
+}
+
+/* ======================================
+   3. 오른쪽 입력 카드
+====================================== */
+
+.home-form-card {
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+}
+
+.home-form-heading {
+  margin-bottom: var(--space-6);
+}
+
+.home-step-label {
+  display: inline-block;
+
+  margin-bottom: var(--space-3);
+
+  color: var(--color-primary);
+  font-size: var(--fs-caption);
+  font-weight: 800;
+}
+
+.home-form-heading h2 {
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-h2);
+  letter-spacing: -0.03em;
+}
+
+.home-form-heading p {
+  margin-bottom: 0;
+}
+
+/* 닉네임 */
+
+.home-nickname-field {
+  margin-bottom: var(--space-6);
+}
+
+.home-nickname-field .help {
+  margin-bottom: 0;
+}
+
+/* ======================================
+   4. 사용자 유형 선택
+====================================== */
+
+.home-type-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.home-field-title {
+  width: 100%;
+
+  margin-bottom: var(--space-2);
+
+  font-size: var(--fs-body);
+  font-weight: 700;
+}
+
+.home-field-description {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-sub);
+  font-size: var(--fs-small);
+}
+
+.home-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.home-type-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+
+  min-width: 0;
+  min-height: 235px;
+
+  padding: var(--space-4);
+
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* 라디오 입력은 접근성을 위해 유지합니다. */
+
+.home-type-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.home-type-card:hover {
+  border-color: var(--color-lilac);
+  box-shadow: var(--shadow-card);
+}
+
+.home-type-card.is-selected,
+.home-type-card:focus-within {
+  border-color: var(--color-primary);
+  background: var(--color-bg-soft);
+}
+
+.home-type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+
+  border-radius: var(--radius-md);
+}
+
+.home-type-icon-lilac {
+  color: var(--color-text);
+  background: var(--color-lilac-soft);
+}
+
+.home-type-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.home-type-number {
+  color: var(--color-primary);
+  font-size: var(--fs-caption);
+  font-weight: 800;
+}
+
+.home-type-title {
+  padding-right: var(--space-3);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+
+.home-type-description {
+  color: var(--color-text-sub);
+  font-size: var(--fs-caption);
+  line-height: 1.7;
+}
+
+.home-type-check {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 23px;
+  height: 23px;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+
+  color: var(--color-on-primary);
+  background: var(--color-bg);
+}
+
+.home-type-check svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+}
+
+.home-type-card.is-selected .home-type-check {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.home-type-card.is-selected .home-type-check svg {
+  opacity: 1;
+}
+
+.home-type-error {
+  margin-top: var(--space-3);
+}
+
+/* ======================================
+   5. 유형 1 관심 분야 선택
+====================================== */
+
+.home-tag-step {
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+
+  border-top: 1px solid var(--color-border);
+}
+
+.home-tag-heading h3 {
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-body);
+}
+
+.home-tag-heading p {
+  margin-bottom: var(--space-4);
+}
+
+.home-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.home-tag-button {
+  min-height: 38px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.home-tag-button:hover {
+  border-color: var(--color-primary);
+}
+
+.home-tag-bottom {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
+.home-tag-step .error {
+  margin-top: var(--space-3);
+}
+
+/* ======================================
+   6. 제출 버튼
+====================================== */
+
+.home-submit-area {
+  margin-top: var(--space-7);
+}
+
+.home-submit {
+  width: 100%;
+  min-height: 52px;
+}
+
+.home-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+.home-save-notice {
+  margin-top: var(--space-3);
+  margin-bottom: 0;
+
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  text-align: center;
+}
+
+.home-form-error {
+  margin-bottom: var(--space-3);
+}
+
+/* ======================================
+   7. 임시 메인 홈
+   다음 단계에서 대시보드 기능 추가
+====================================== */
+
+.home-dashboard {
+  min-height: 75vh;
+  padding: var(--space-7) 0;
+}
+
+.home-dashboard-hero {
+  position: relative;
+  overflow: hidden;
+
+  padding: var(--space-8);
+
+  background: var(--gradient-hero);
+  border-radius: var(--radius-lg);
+}
+
+.home-dashboard-hero h1 {
+  margin: var(--space-5) 0 var(--space-3);
+  font-size: var(--fs-display);
+  line-height: 1.4;
+}
+
+.home-dashboard-hero p {
+  margin-bottom: 0;
+  color: var(--color-text-sub);
+  font-size: var(--fs-body);
+  line-height: 1.8;
+}
+
+.home-welcome-card {
+  margin-top: var(--space-6);
+}
+
+.home-welcome-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.home-welcome-heading svg {
+  width: 24px;
+  height: 24px;
+  color: var(--color-primary);
+}
+
+.home-welcome-heading h2 {
+  margin: 0;
+}
+
+.home-welcome-card > p {
+  margin-top: var(--space-4);
+}
+
+.home-user-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+
+  margin-top: var(--space-5);
+}
+
+.home-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  padding: var(--space-4);
+
+  background: var(--color-neutral-soft);
+  border-radius: var(--radius-md);
+}
+
+.home-summary-label {
+  color: var(--color-text-sub);
+  font-size: var(--fs-caption);
+}
+
+.home-summary-value {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* ======================================
+   8. 모바일 반응형
+====================================== */
+
+@media (max-width: 768px) {
+
+  .home-onboarding {
+    padding: var(--space-7) 0;
+  }
+
+  .home-intro h1 {
+    font-size: var(--fs-h1);
+  }
+
+  .home-intro-desc {
+    font-size: var(--fs-small);
+  }
+
+  .home-onboarding-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .home-preview {
+    min-height: auto;
+    padding: var(--space-6);
+  }
+
+  .home-preview-icon {
+    margin-top: var(--space-6);
+  }
+
+  .home-preview-list {
+    margin-top: var(--space-5);
+  }
+
+  .home-form-card {
+    padding: var(--space-5);
+  }
+
+  .home-dashboard-hero {
+    padding: var(--space-6);
+  }
+
+  .home-dashboard-hero h1 {
+    font-size: var(--fs-h1);
+  }
+}
+
+@media (max-width: 480px) {
+
+  .home-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-type-card {
+    min-height: 180px;
+  }
+
+  .home-form-card {
+    padding: var(--space-4);
+  }
+
+  .home-intro-desc br {
+    display: none;
+  }
+
+  .home-user-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-type-card,
+  .home-tag-button {
+    transition: none;
+  }
+}
