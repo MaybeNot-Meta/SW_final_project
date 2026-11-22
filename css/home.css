@@ -645,3 +645,256 @@
     transition: none;
   }
 }
+
+
+/* ======================================
+   STEP 5 - 메인 홈 대시보드
+   기존 STEP 4 스타일은 모두 유지
+====================================== */
+
+/* 화면 및 버튼 숨김 처리 */
+.dash5[hidden],
+.dash5 [hidden] {
+  display: none !important;
+}
+
+/* 대시보드 전체 */
+.dash5 {
+  margin-top: var(--space-7);
+}
+
+/* 2열 카드 배치 */
+.dash5-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+/* 공통 대시보드 카드 */
+.dash5-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+
+  min-width: 0;
+  padding: var(--space-6);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.dash5-card h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--fs-h3);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* 카드 상단 */
+.dash5-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.dash5-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  color: var(--color-primary);
+  font-size: var(--fs-small);
+  font-weight: 700;
+}
+
+.dash5-kicker svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.dash5-muted {
+  margin: 0;
+  color: var(--color-text-sub);
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+/* 오늘의 질문 */
+.dash5-card .dash5-question {
+  font-size: var(--fs-h2);
+  font-weight: 700;
+}
+
+/* 정리 대기 경험 숫자 */
+.dash5-card .dash5-count {
+  color: var(--color-primary);
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.dash5-count small {
+  margin-left: var(--space-1);
+  font-size: var(--fs-body);
+  font-weight: 600;
+}
+
+/* 이동 링크 */
+.dash5-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  margin-top: auto;
+
+  color: var(--color-primary);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.dash5-link:hover {
+  text-decoration: underline;
+}
+
+/* 최근 경험 섹션 */
+.dash5-section {
+  margin-bottom: var(--space-6);
+}
+
+.dash5-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+
+  margin-bottom: var(--space-5);
+}
+
+.dash5-section-head h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-h2);
+}
+
+.dash5-records {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+/* 개별 경험 카드 */
+.dash5-record {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  min-width: 0;
+  min-height: 190px;
+
+  padding: var(--space-5);
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.dash5-record h3 {
+  margin: 0;
+  font-size: var(--fs-h3);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.dash5-record-content {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+
+  margin: 0;
+
+  color: var(--color-text-sub);
+  font-size: var(--fs-small);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+/* 경험 역량 태그 */
+.dash5-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.dash5-tag {
+  padding: var(--space-1) var(--space-3);
+
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+
+  border-radius: var(--radius-full);
+  font-size: var(--fs-caption);
+}
+
+/* 경험 기록이 없는 경우 */
+.dash5-empty {
+  grid-column: 1 / -1;
+
+  margin: 0;
+  padding: var(--space-7) var(--space-5);
+
+  background: var(--color-neutral-soft);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+
+  color: var(--color-text-sub);
+  text-align: center;
+}
+
+/* 태블릿 */
+@media (max-width: 900px) {
+  .dash5-records {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .dash5 {
+    margin-top: var(--space-6);
+  }
+
+  .dash5-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .dash5-card {
+    padding: var(--space-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .dash5-records {
+    grid-template-columns: 1fr;
+  }
+
+  .dash5-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dash5-card {
+    padding: var(--space-4);
+  }
+}
