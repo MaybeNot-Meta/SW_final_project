@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GrowPath - 경험 기록</title>
+  <title>경험 기록 · myfo</title>
   <meta name="description" content="내 경험을 기록하고 성장 스토리를 만드는 자기 계발 서비스">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- myfo 공통 헤더 스타일: 경험 기록 고유 스타일보다 먼저 로드 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="../../common/tokens.css">
+  <link rel="stylesheet" href="../../common/base.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.4/dist/cal-heatmap.css">
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
@@ -17,6 +21,7 @@
   <script src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.2.4/dist/cal-heatmap.min.js"></script>
 </head>
 <body>
+  <div id="header"></div>
   <main class="main-content">
     <div class="page-shell">
       <section class="page-heading">
@@ -206,6 +211,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="../../data/tags.js"></script>
   <script src="../../common/storage.js"></script>
+  <script src="../../common/header.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
