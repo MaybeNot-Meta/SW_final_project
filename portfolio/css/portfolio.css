@@ -111,10 +111,14 @@
 .pf-dev-header a { color: var(--pf-sub); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .pf-dev-header a.is-active { color: var(--pf-blue); }
 
+/* 프로젝트 묶기 페이지만 홈과 비슷한 폭으로 정렬합니다.
+   STAR·내보내기 화면의 고유 레이아웃은 변경하지 않습니다. */
+.pf-page--board { max-width: 1090px; }
+
 /* ==========================================================
    1. 프로젝트 묶기
    ========================================================== */
-.pf-board { display: grid; grid-template-columns: minmax(300px, 380px) 1fr; gap: 20px; align-items: start; }
+.pf-board { display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 20px; align-items: start; }
 .pf-pool { padding: 18px; position: sticky; top: 16px; max-height: calc(100vh - 32px); display: flex; flex-direction: column; }
 .pf-pool-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
 .pf-search { position: relative; }
@@ -150,7 +154,7 @@
 .sortable-chosen { box-shadow: 0 8px 24px rgba(47, 91, 224, .18); }
 
 .pf-projects-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.pf-project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.pf-project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 16px; }
 .pf-project { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 .pf-project.is-new { animation: pf-pop .35s ease; }
 @keyframes pf-pop { from { transform: scale(.97); opacity: .3; } to { transform: none; opacity: 1; } }
