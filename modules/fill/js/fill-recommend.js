@@ -19,9 +19,27 @@
   function renderAll(){
     let list=CONTESTS.filter(c=>active==="전체"||c.field===active);
     const q=document.getElementById("search").value.trim();
-    if(q){const fuse=new Fuse(list,{keys:["title","host","field","tags"],threshold:.35});list=fuse.search(q).map(r=>r.item)}
+    if(q){
+      // 외부 검색 라이브러리가 로딩되지 않아도 기본 검색이 동작합니다.
+      const keyword=q.toLocaleLowerCase("ko");
+      const basicSearch=()=>list.filter(c=>[c.title,c.host,c.field,...(c.tags||[])]
+        .some(v=>String(v||"").toLocaleLowerCase("ko").includes(keyword)));
+      if(typeof window.Fuse==="function"){
+        try{
+          const fuse=new window.Fuse(list,{keys:["title","host","field","tags"],threshold:.35});
+          list=fuse.search(q).map(r=>r.item);
+        }catch(error){
+          console.warn("검색 라이브러리 오류: 기본 검색으로 전환합니다.",error);
+          list=basicSearch();
+        }
+      }else{
+        list=basicSearch();
+      }
+    }
     if(document.getElementById("sort").value==="deadline")list=[...list].sort((a,b)=>dayjs(a.deadline)-dayjs(b.deadline));else list=[...list].sort((a,b)=>a.title.localeCompare(b.title,"ko"));
-    document.getElementById("allContests").innerHTML=list.map(card).join("");
+    document.getElementById("allContests").innerHTML=list.length
+      ? list.map(card).join("")
+      : `<div class="notice">검색 결과가 없습니다. 검색어나 선택한 분야를 확인해 주세요.</div>`;
   }
   renderAll();
   document.getElementById("filters").addEventListener("click",e=>{const b=e.target.closest("[data-field]");if(!b)return;active=b.dataset.field;document.querySelectorAll("[data-field]").forEach(x=>x.classList.toggle("active",x===b));renderAll()});

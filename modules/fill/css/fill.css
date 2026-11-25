@@ -27,3 +27,36 @@
 .notice { background:#eef1ff; color:#424b91; border-radius:12px; padding:14px; margin:14px 0; } .kanban { display:grid; grid-template-columns:repeat(4,minmax(180px,1fr)); gap:12px; } .kanban-col { background:#eef0f5; border-radius:14px; padding:12px; min-height:220px; }
 @media(max-width:800px){ .grid{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:1fr}.kanban{grid-template-columns:1fr 1fr}.topbar{align-items:flex-start}.topbar nav{flex-wrap:wrap}}
 @media(max-width:520px){ .grid{grid-template-columns:1fr}.kanban{grid-template-columns:1fr}.summary-list{grid-template-columns:1fr}.toolbar{flex-wrap:wrap}}
+
+/* STEP 7: 공고 필터·검색·정렬 레이아웃 보정
+   기존 검색/필터 이벤트와 데이터 기능은 변경하지 않습니다. */
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px) 160px;
+  align-items: start;
+  gap: 12px;
+}
+.toolbar #filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.toolbar input#search,
+.toolbar select#sort {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  font-size: 15px;
+}
+.toolbar input#search { max-width: none; }
+
+@media (max-width: 900px) {
+  .toolbar { grid-template-columns: minmax(0, 1fr) 160px; }
+  .toolbar #filters { grid-column: 1 / -1; }
+}
+@media (max-width: 520px) {
+  .toolbar { grid-template-columns: minmax(0, 1fr); }
+  .toolbar #filters { grid-column: auto; }
+}
