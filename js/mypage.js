@@ -229,16 +229,32 @@
     }
   });
 
-  // 데이터 백업(JSON)은 브라우저에서 직접 생성합니다.
+  // STEP 7-30: 백업 범위를 현재 myfo 저장 데이터에 맞게 확장합니다.
+  // 기존 JSON의 최상위 user/records/projects/scraps 키는 호환을 위해 유지합니다.
+  function readOptionalJson(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw === null ? fallback : JSON.parse(raw);
+    } catch (error) {
+      console.warn("선택 데이터 읽기 실패:", key, error);
+      return fallback;
+    }
+  }
+
+  let backupDownloadedThisPage = false;
+
   byId("mp-backup").addEventListener("click", function () {
     const backup = {
+      app: "myfo",
+      backupVersion: 2,
       exportedAt: new Date().toISOString(),
       user: getUser(),
       records: getRecords(),
       projects: getProjects(),
-      scraps: getScraps()
+      scraps: getScraps(),
+      scrapStatus: readOptionalJson("scrapStatus", {}),
+      recordDraft: readOptionalJson("growpath-draft", null)
     };
-
     const blob = new Blob([JSON.stringify(backup, null, 2)], {
       type: "application/json;charset=utf-8"
     });
@@ -250,27 +266,56 @@
     link.click();
     link.remove();
     window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    notify("데이터 백업 파일을 만들었어요.");
+    backupDownloadedThisPage = true;
+    notify("사용자·경험·프로젝트·스크랩 진행 상태를 백업했어요. 다운로드 폴더를 확인해 주세요.");
   });
 
   byId("mp-sample").addEventListener("click", async function () {
+    // 이미 저장한 데이터가 있는 사용자가 실수로 샘플로 덮어쓰지 않도록
+    // 같은 화면에서 먼저 백업 버튼을 누르도록 요구합니다.
+    const hasExistingData = !!getUser() || !!getRecords().length ||
+      !!getProjects().length || !!getScraps().length ||
+      !!Object.keys(readOptionalJson("scrapStatus", {}) || {}).length;
+    if (hasExistingData && !backupDownloadedThisPage) {
+      notify("기존 데이터를 보호하려면 먼저 '데이터 JSON 백업'을 눌러 파일을 저장해 주세요.");
+      return;
+    }
+
     const ok = await confirmAction(
       "발표용 샘플 데이터를 불러올까요?",
-      "현재 사용자·경험·프로젝트·스크랩 데이터가 샘플 데이터로 바뀝니다. 필요하다면 먼저 JSON으로 백업해 주세요.",
+      "현재 사용자·경험·프로젝트·스크랩·진행 상태가 샘플 데이터로 교체됩니다. 백업 파일을 보관했는지 확인해 주세요.",
       "샘플 데이터로 교체"
     );
     if (!ok) return;
 
+    // 교체 중 저장 오류가 발생할 경우 원래 네 개 저장 키와 진행 상태를 복구합니다.
+    const keys = ["user", "records", "projects", "scraps", "scrapStatus"];
+    const previous = Object.fromEntries(keys.map(key => [key, localStorage.getItem(key)]));
     try {
-      const result = loadSampleData();
-      if (!result) {
-        notify("샘플 데이터가 준비되지 않았어요.");
+      if (typeof SAMPLE_DATA === "undefined" ||
+          !SAMPLE_DATA.user || !Array.isArray(SAMPLE_DATA.records) ||
+          !Array.isArray(SAMPLE_DATA.projects) || !Array.isArray(SAMPLE_DATA.scraps) ||
+          !SAMPLE_DATA.scrapStatus || typeof SAMPLE_DATA.scrapStatus !== "object") {
+        notify("샘플 데이터 형식이 올바르지 않아요.");
         return;
       }
+      const result = loadSampleData();
+      if (!result) throw new Error("샘플 데이터를 불러오지 못했어요.");
+      localStorage.setItem("scrapStatus", JSON.stringify(SAMPLE_DATA.scrapStatus));
+      backupDownloadedThisPage = false;
       refreshPage();
       notify("발표용 샘플 데이터를 불러왔어요.");
     } catch (error) {
-      notify(error.message || "샘플 데이터를 불러오지 못했어요.");
+      try {
+        keys.forEach(key => {
+          if (previous[key] === null) localStorage.removeItem(key);
+          else localStorage.setItem(key, previous[key]);
+        });
+        refreshPage();
+      } catch (restoreError) {
+        console.error("샘플 적용 중 오류 후 데이터 복구 실패:", restoreError);
+      }
+      notify(error.message || "샘플 데이터를 불러오지 못했어요. 기존 정보를 복구했습니다.");
     }
   });
 

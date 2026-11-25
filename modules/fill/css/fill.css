@@ -606,3 +606,61 @@ body:has(#scrapBoard) #fill-local-nav .topbar nav a[href="fill-scrap.html"] {
   .shell #fill-local-nav { width: 100%; }
   .shell #fill-local-nav .fill-view-nav { width: 100%; }
 }
+
+
+/* STEP 7-30 — 참여 기록 역량 태그만 myfo 선택형 칩으로 표시.
+   체크박스 DOM/선택 값/저장 이벤트는 변경하지 않습니다. */
+.shell #recordForm .tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+.shell #recordForm .tag-options label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 15px;
+  border: 1px solid #d7e2f2;
+  border-radius: 999px;
+  background: #fff;
+  color: #587095;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.shell #recordForm .tag-options label:hover {
+  background: #f2f6ff;
+  border-color: #aabff3;
+}
+.shell #recordForm .tag-options label:has(input:checked) {
+  background: #eaf0ff;
+  border-color: #6a8df0;
+  color: #365fd7;
+}
+.shell #recordForm .tag-options label:has(input:checked)::before {
+  content: '✓';
+  margin-right: 6px;
+  font-weight: 800;
+}
+.shell #recordForm .tag-options label:has(input:focus-visible) {
+  outline: 3px solid rgba(88,123,232,.34);
+  outline-offset: 2px;
+}
+.shell #recordForm .tag-options input[type='checkbox'] {
+  /* 실제 checkbox는 숨기기만 하므로 클릭·키보드·검증 로직이 유지됩니다. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+}
+.shell #recordForm .tag-options[aria-invalid='true'] label {
+  border-color: #d65f70;
+}
