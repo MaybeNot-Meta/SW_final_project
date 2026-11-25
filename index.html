@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/home.css">
   <!-- myfo 전체 공통 UI: 페이지별 CSS보다 나중에 적용 -->
   <link rel="stylesheet" href="common/unified-ui.css">
+  <link rel="stylesheet" href="common/profile.css">
 </head>
 
 <body>
@@ -357,8 +358,34 @@
     </section>
 
     <!-- ===================================
+         STEP 02: 신규 사용자 상세 정보
+         두 유형 모두 공통으로 이 단계를 거쳐 홈에 진입합니다.
+    ==================================== -->
+
+    <section id="home-profile-step" class="home-profile-step" hidden aria-labelledby="home-profile-title">
+      <div class="container"><div class="home-profile-wrap">
+        <div class="home-profile-intro">
+          <span class="home-eyebrow">STEP 02 · 내 정보 등록</span>
+          <h1 id="home-profile-title">나의 기본 정보를 알려주세요.</h1>
+          <p>기본 정보와 학력을 입력해 주세요. 모든 항목은 선택 사항이며, 경력과 활동은 경험 기록에서 따로 정리할 수 있어요.</p>
+        </div>
+        <div class="card home-profile-card">
+          <form id="home-profile-form" novalidate>
+            <div id="home-profile-fields"></div>
+            <p id="home-profile-error" class="error" role="alert" hidden></p>
+            <div class="home-profile-actions">
+              <button class="btn btn-secondary" id="home-profile-back" type="button">이전 단계</button>
+              <button class="btn btn-secondary" id="home-profile-skip" type="button">건너뛰기</button>
+              <button class="btn btn-primary" type="submit">저장하고 홈으로</button>
+            </div>
+            <p class="home-profile-privacy">입력 정보는 현재 브라우저에만 저장되며, 마이페이지에서 수정할 수 있어요.</p>
+          </form>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- ===================================
          사용자 등록 완료: 메인 홈
-         STEP 5에서 본격적으로 개발
     ==================================== -->
 
     <section
@@ -421,6 +448,7 @@
   <script src="data/tags.js"></script>
   <script src="common/storage.js"></script>
   <script src="common/header.js"></script>
+  <script src="common/profile.js"></script>
 
   <!-- 온보딩 전용 기능 -->
   <script src="js/home.js"></script>

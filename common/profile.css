@@ -1,0 +1,30 @@
+/* STEP 7-29: 온보딩과 마이페이지가 공유하는 상세 정보 폼 */
+.home-profile-step[hidden], .home-profile-step .error[hidden] { display: none !important; }
+.home-profile-step { min-height: 75vh; padding: var(--space-7) 0 var(--space-8); background: var(--color-bg-soft); }
+.home-profile-wrap { max-width: 900px; margin: 0 auto; }
+.home-profile-intro { margin-bottom: var(--space-6); }
+.home-profile-intro h1 { margin: var(--space-3) 0 var(--space-2); font-size: clamp(26px, 3.3vw, 34px); }
+.home-profile-intro p { color: var(--color-text-sub); margin: 0; }
+.home-profile-card { padding: clamp(20px, 4vw, 40px); }
+.myfo-profile-fields { display: grid; gap: var(--space-5); }
+.myfo-profile-section { padding-bottom: var(--space-5); border-bottom: 1px solid var(--color-border); }
+.myfo-profile-section:last-child { padding-bottom: 0; border-bottom: 0; }
+.myfo-profile-section-heading { margin-bottom: var(--space-4); }
+.myfo-profile-section-heading h3 { font-size: 18px; margin: 0 0 var(--space-1); }
+.myfo-profile-section-heading p { margin: 0; color: var(--color-text-sub); font-size: var(--fs-small); }
+.myfo-profile-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-4); }
+.myfo-profile-field { min-width: 0; margin: 0 !important; }
+.myfo-profile-field .input { width: 100%; min-width: 0; }
+.myfo-profile-wide { grid-column: 1 / -1; }
+.myfo-profile-textarea { min-height: 90px; resize: vertical; }
+.home-profile-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.home-profile-actions .btn { min-height: 44px; }
+.home-profile-privacy { margin: var(--space-4) 0 0; color: var(--color-text-sub); font-size: var(--fs-caption); }
+.mp-profile-fields { padding: var(--space-5) 0; border-top: 1px solid var(--color-border); }
+.mp-profile-fields .myfo-profile-section-heading h3 { font-size: 16px; }
+@media (max-width: 640px) {
+ .myfo-profile-grid { grid-template-columns: 1fr; }
+ .home-profile-actions { align-items: stretch; }
+ .home-profile-actions .btn { flex: 1 1 auto; }
+ .home-profile-card { padding: var(--space-4); }
+}

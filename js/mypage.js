@@ -15,6 +15,7 @@
   const errorElement = document.getElementById("mp-form-error");
   const clearJobButton = document.getElementById("mp-clear-job");
   const selectedTags = new Set();
+  const profileFields = document.getElementById("mp-profile-fields");
 
   // 가입하지 않은 상태에서는 온보딩으로 이동합니다.
   if (!getUser()) {
@@ -110,6 +111,7 @@
 
   function fillProfile(user) {
     nicknameInput.value = user.nickname || "";
+    MyfoProfile.fill(profileFields, user.profile);
     typeInputs.forEach(function (input) {
       input.checked = Number(input.value) === user.userType;
     });
@@ -184,12 +186,20 @@
       return;
     }
 
+    const invalid = MyfoProfile.firstInvalid(profileFields);
+    if (invalid) {
+      showError("입력 형식을 확인해 주세요. 이메일 주소가 올바른지 확인해 주세요.");
+      invalid.focus();
+      return;
+    }
+
     try {
       saveUser({
         nickname,
         userType: type,
-        interestTags: Array.from(selectedTags)
-        // 기존 targetJob과 다른 확장 정보는 saveUser()에서 유지합니다.
+        interestTags: Array.from(selectedTags),
+        profile: MyfoProfile.read(profileFields, (getUser() || {}).profile)
+        // targetJob과 기록·프로젝트 등 다른 정보는 건드리지 않습니다.
       });
       refreshPage();
       notify("사용자 정보를 저장했어요.");
@@ -280,6 +290,7 @@
     }
   });
 
+  MyfoProfile.render(profileFields, "mp");
   renderTagOptions();
   refreshPage();
 })();

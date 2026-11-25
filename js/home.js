@@ -13,6 +13,11 @@
 
   const onboarding = document.getElementById("onboarding");
   const dashboard = document.getElementById("home-dashboard");
+  const profileStep = document.getElementById("home-profile-step");
+  const profileForm = document.getElementById("home-profile-form");
+  const profileFields = document.getElementById("home-profile-fields");
+  const profileError = document.getElementById("home-profile-error");
+  let pendingUserData = null;
 
   const form = document.getElementById("home-onboarding-form");
   const nicknameInput = document.getElementById("home-nickname");
@@ -98,9 +103,9 @@
     tagStep.hidden = userType !== 1;
 
     if (userType === 1) {
-      submitLabel.textContent = "관심 분야 저장하고 시작하기";
+      submitLabel.textContent = "다음: 사용자 정보 입력";
     } else if (userType === 2) {
-      submitLabel.textContent = "경험 정리 시작하기";
+      submitLabel.textContent = "다음: 사용자 정보 입력";
     } else {
       submitLabel.textContent = "시작하기";
     }
@@ -285,6 +290,7 @@
 
     if (!user) {
       onboarding.hidden = false;
+      profileStep.hidden = true;
       dashboard.hidden = true;
 
       document.title = "시작하기 · myfo";
@@ -294,6 +300,7 @@
 
     // 등록된 사용자는 온보딩 대신 홈을 표시합니다.
     onboarding.hidden = true;
+    profileStep.hidden = true;
     dashboard.hidden = false;
 
     document.title = "메인 홈 · myfo";
@@ -318,50 +325,62 @@
       "관심 분야",
       interests || "아직 선택하지 않았어요"
     );
+
+    const info = user.profile || {};
+    const education = [info.school, info.major, info.educationStatus].filter(Boolean).join(" · ");
+    if (education) addSummaryItem("학력", education);
   }
 
   // ========================================
-  // 7. 온보딩 데이터 저장
+  // 7. 2단계 온보딩: 기본 정보 → 상세 정보 → 홈
   // ========================================
 
-  // 입력한 사용자 정보를 저장하고 다음 화면으로 이동합니다.
   function handleSubmit(event) {
     event.preventDefault();
-
     const userData = validateForm();
+    if (!userData) return;
 
-    if (!userData) {
+    // 상세 정보 입력이 끝나기 전에는 user 키를 저장하지 않습니다.
+    // 그래야 두 유형 모두 홈으로 진입하는 흐름과 기존 사용자 데이터를 보존합니다.
+    pendingUserData = userData;
+    onboarding.hidden = true;
+    profileStep.hidden = false;
+    dashboard.hidden = true;
+    document.title = "내 정보 등록 · myfo";
+    window.scrollTo(0, 0);
+    profileFields.querySelector("input")?.focus();
+  }
+
+  function completeOnboarding(profile) {
+    if (!pendingUserData) return;
+    try {
+      saveUser({ ...pendingUserData, profile: profile || {} });
+      pendingUserData = null;
+      renderPage();
+      if (typeof renderHeader === "function") renderHeader();
+      // STEP 5 대시보드도 새 사용자의 데이터를 즉시 표시합니다.
+      if (typeof window.refreshStep5Dashboard === "function") {
+        window.refreshStep5Dashboard();
+      }
+      window.scrollTo(0, 0);
+    } catch (error) {
+      console.error("사용자 정보 저장 실패:", error);
+      profileError.textContent = error.message || "사용자 정보를 저장하지 못했어요.";
+      profileError.hidden = false;
+    }
+  }
+
+  function handleProfileSubmit(event) {
+    event.preventDefault();
+    profileError.hidden = true;
+    const invalid = MyfoProfile.firstInvalid(profileFields);
+    if (invalid) {
+      profileError.textContent = "입력 형식을 확인해 주세요. 이메일 주소가 올바른지 확인해 주세요.";
+      profileError.hidden = false;
+      invalid.focus();
       return;
     }
-
-    try {
-      // STEP 2에서 구현한 공통 저장 함수를 사용합니다.
-      saveUser(userData);
-
-      // 유형 2는 경험 꺼내기 페이지로 이동합니다.
-      if (userData.userType === 2) {
-        window.location.href = "modules/record/index.html?tab=extract";
-        return;
-      }
-
-      // 유형 1은 등록 후 메인 홈을 표시합니다.
-      renderPage();
-
-      // STEP 3에서 만든 공통 헤더도 갱신합니다.
-      if (typeof renderHeader === "function") {
-        renderHeader();
-      }
-
-      window.scrollTo(0, 0);
-
-    } catch (error) {
-      console.error("온보딩 저장 실패:", error);
-
-      setError(
-        formError,
-        error.message || "사용자 정보를 저장하지 못했어요."
-      );
-    }
+    completeOnboarding(MyfoProfile.read(profileFields));
   }
 
   // ========================================
@@ -371,10 +390,22 @@
   // 온보딩 이벤트를 등록하고 초기 화면을 표시합니다.
   function initialize() {
     renderTags();
+    MyfoProfile.render(profileFields, "ob");
     updateTypeSelection();
     renderPage();
 
     form.addEventListener("submit", handleSubmit);
+    profileForm.addEventListener("submit", handleProfileSubmit);
+    document.getElementById("home-profile-back").addEventListener("click", function () {
+      profileError.hidden = true;
+      profileStep.hidden = true;
+      onboarding.hidden = false;
+      document.title = "시작하기 · myfo";
+      window.scrollTo(0, 0);
+    });
+    document.getElementById("home-profile-skip").addEventListener("click", function () {
+      completeOnboarding({});
+    });
   }
 
   initialize();
