@@ -423,3 +423,15 @@ input:focus, select:focus, textarea:focus { border-color: #72b0e7; box-shadow: 0
 .skill-tag-choice:has(input:checked) { background: #edf3ff; color: #3157b7; border-color: #9fb7f4; }
 .skill-tag-choice input { width: 15px; height: 15px; padding: 0; margin: 0; accent-color: #587be8; box-shadow: none; }
 .skill-tag-choice:focus-within { outline: 2px solid #587be8; outline-offset: 2px; }
+
+/* 홈 '오늘의 질문'에서 넘어온 작성 안내 */
+.record-linked-question {
+  margin: 0 0 20px;
+  padding: 16px 18px;
+  border: 1px solid #d8e5fa;
+  border-radius: 12px;
+  background: #f1f5ff;
+  color: #233e70;
+}
+.record-linked-question strong { display: block; margin-bottom: 6px; font-size: 13px; color: #426fe5; }
+.record-linked-question p { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.6; }

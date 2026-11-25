@@ -454,3 +454,13 @@ table {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* STEP 7-28: 직무 연결 제목 아래 페이지 설명 (기존 탭·매칭 로직 유지) */
+.jc-shell .jc-page-description {
+  margin: -7px 0 2px;
+  color: var(--color-text-sub, #647899);
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: keep-all;
+}

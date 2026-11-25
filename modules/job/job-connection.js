@@ -488,7 +488,8 @@ function mountJobConnection(root, storageApi = storage) {
       : state.view === "cards"
         ? renderCards(state)
         : renderMatching(state);
-    root.innerHTML = `<h1 class="jc-title">직무 연결</h1>
+    root.innerHTML = `<p class="jc-kicker myfo-eyebrow">경험에서 진로로</p><h1 class="jc-title">직무 연결</h1>
+    <p class="jc-page-description">나의 경험과 역량을 바탕으로 어울리는 직무를 찾고, 부족한 역량과 다음 활동을 확인해 보세요.</p>
     ${renderTabs(state.view)}
     ${state.feedback ? `<div class="jc-notice jc-notice--info" role="status">${escapeHtml(state.feedback)}</div>` : ""}
     ${viewContent}`;

@@ -340,7 +340,7 @@
 
       // 유형 2는 경험 꺼내기 페이지로 이동합니다.
       if (userData.userType === 2) {
-        window.location.href = "record-extract.html";
+        window.location.href = "modules/record/index.html?tab=extract";
         return;
       }
 

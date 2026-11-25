@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="common/base.css">
   <!-- STEP 6 전용 디자인: 다른 페이지에 영향을 주지 않습니다. -->
   <link rel="stylesheet" href="css/mypage.css">
+  <!-- myfo 전체 공통 UI: 페이지별 CSS보다 나중에 적용 -->
+  <link rel="stylesheet" href="common/unified-ui.css">
 </head>
 <body>
   <div id="header"></div>
@@ -85,9 +87,9 @@
           <section class="card mp-job" aria-labelledby="mp-job-title">
             <div class="mp-section-title"><i data-lucide="briefcase-business"></i><h2 id="mp-job-title">목표 직무</h2></div>
             <p id="mp-job-value" class="mp-job-value">설정된 목표 직무가 없어요.</p>
-            <p class="text-sub text-small">직무 선택은 직무 연결 페이지와 연동되면 이용할 수 있어요.</p>
+            <p class="text-sub text-small">목표 직무는 직무 연결에서 설정하거나 변경할 수 있어요.</p>
             <div class="mp-actions">
-              <a href="job-match.html" class="btn btn-secondary">직무 연결로 이동</a>
+              <a href="modules/job/index.html" class="btn btn-secondary">직무 연결로 이동</a>
               <button id="mp-clear-job" type="button" class="btn btn-text" hidden>목표 직무 해제</button>
             </div>
           </section>
@@ -116,6 +118,7 @@
   <script src="common/storage.js"></script>
   <script src="data/sample.js"></script>
   <script src="common/header.js"></script>
+  <script src="modules/job/data/jobs.js"></script>
   <script src="js/mypage.js"></script>
 </body>
 </html>

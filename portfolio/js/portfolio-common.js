@@ -117,6 +117,9 @@
     { id: 'frontend', name: '프론트엔드 개발자', desc: '사용자가 보는 웹 화면을 구현', skills: { 개발: 3, 디자인: 1, 협업: 2 }, tasks: [] },
   ];
   function getJobList() {
+    // 통합 프로젝트에서는 직무 연결과 동일한 6개 직무 데이터를 사용합니다.
+    const sharedJobs = window.OPSJOB?.data?.jobs;
+    if (Array.isArray(sharedJobs) && sharedJobs.length) return sharedJobs;
     /* global jobs, JOBS */
     try { if (typeof jobs !== 'undefined' && Array.isArray(jobs)) return jobs; } catch (e) { /* 없음 */ }
     try { if (typeof JOBS !== 'undefined' && Array.isArray(JOBS)) return JOBS; } catch (e) { /* 없음 */ }

@@ -123,8 +123,10 @@
     updateTagButtons();
 
     const hasTarget = typeof user.targetJob === "string" && user.targetJob.length > 0;
+    const sharedJobs = window.OPSJOB?.data?.jobs || [];
+    const matchingJob = sharedJobs.find(job => job.id === user.targetJob);
     byId("mp-job-value").textContent = hasTarget
-      ? `현재 선택된 직무 ID: ${user.targetJob}`
+      ? (matchingJob ? matchingJob.name : `선택한 직무: ${user.targetJob}`)
       : "설정된 목표 직무가 없어요.";
     clearJobButton.hidden = !hasTarget;
   }

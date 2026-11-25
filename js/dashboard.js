@@ -45,7 +45,7 @@
 
         <a id="dash5-question-link"
            class="dash5-link"
-           href="record-write.html">
+           href="modules/record/index.html?tab=write">
           질문으로 경험 기록하기
         </a>
 
@@ -69,7 +69,7 @@
           아직 포트폴리오 프로젝트로 묶지 않은 경험이에요.
         </p>
 
-        <a class="dash5-link" href="portfolio-group.html">
+        <a class="dash5-link" href="portfolio/index.html">
           프로젝트로 정리하기
         </a>
 
@@ -88,7 +88,7 @@
           </p>
         </div>
 
-        <a class="dash5-link" href="record-list.html">
+        <a class="dash5-link" href="modules/record/index.html?tab=list">
           전체 기록 보기
         </a>
       </div>
@@ -111,7 +111,7 @@
 
         <p id="dash5-job-status" class="dash5-muted"></p>
 
-        <a class="dash5-link" href="job-match.html">
+        <a class="dash5-link" href="modules/job/index.html">
           직무 연결 페이지
         </a>
 
@@ -131,7 +131,7 @@
 
         <p id="dash5-recommend-status" class="dash5-muted"></p>
 
-        <a class="dash5-link" href="fill-recommend.html">
+        <a class="dash5-link" href="modules/fill/fill-recommend.html">
           추천 활동 살펴보기
         </a>
 
@@ -200,9 +200,9 @@
     byId("dash5-question-title").textContent = question;
 
     // 경험 기록 담당 페이지에 질문을 전달할 URL입니다.
+    // 실제 경험 기록 화면으로 이동하고 오늘의 질문을 전달합니다.
     link.href =
-      `record-write.html?title=${encodeURIComponent(question)}` +
-      `&template=${encodeURIComponent("일기형")}`;
+      `modules/record/index.html?tab=write&question=${encodeURIComponent(question)}`;
 
     link.hidden = false;
   }
@@ -303,11 +303,10 @@
 
     renderRecent(records);
 
-    // 직무 매칭은 실제 팀원 함수 연결 전까지 안내만 표시합니다.
     byId("dash5-job-status").textContent =
       records.length < 3
-        ? `현재 기록 ${records.length}개. 경험을 3개 이상 모으면 직무 분석을 준비할 수 있어요.`
-        : "경험이 3개 이상 모였어요. 실제 매칭률은 직무 연결 팀원 기능을 연동한 뒤 표시해요.";
+        ? `현재 기록 ${records.length}개. 경험을 더 모으면 직무 분석이 구체적이 돼요.`
+        : `경험 ${records.length}개를 바탕으로 직무 추천과 역량 분석을 확인해 보세요.`;
 
     // 현재 사용자의 관심 태그를 추천 기준으로 안내합니다.
     const interests = Array.isArray(user.interestTags)
@@ -316,8 +315,8 @@
 
     byId("dash5-recommend-status").textContent =
       interests.length
-        ? `관심 분야: ${interests.join(", ")}. 추천 공고는 팀원 데이터가 연결되면 표시돼요.`
-        : "관심 분야를 설정하면 활동 추천에 활용할 수 있어요. 추천 기능 연결 전이에요.";
+        ? `관심 분야: ${interests.join(", ")}. 나에게 맞는 활동을 확인해 보세요.`
+        : "목표 직무와 부족한 역량을 기준으로 추천 활동을 확인해 보세요.";
   }
 
   // STEP 4의 home.js가 온보딩 저장을 먼저 처리합니다.

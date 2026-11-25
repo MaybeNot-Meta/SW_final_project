@@ -10,8 +10,8 @@ const categoryData = {
 };
 
 const templateFields = {
-  star: [["상황", "어떤 배경에서 경험이 시작됐나요?"], ["과제", "나에게 주어진 목표나 과제는 무엇인가요?"], ["행동", "목표를 위해 내가 직접 한 행동은 무엇인가요?"], ["결과", "어떤 성과와 배움을 얻었나요?"]],
-  kpt: [["Keep", "계속 유지하고 싶은 행동이나 좋은 점은?"], ["Problem", "어려웠거나 개선이 필요한 점은?"], ["Try", "다음에 시도할 구체적인 행동은?"]],
+  star: [["상황 (Situation)", "어떤 배경에서 경험이 시작됐나요?"], ["과제 (Task)", "나에게 주어진 목표나 과제는 무엇인가요?"], ["행동 (Action)", "목표를 위해 내가 직접 한 행동은 무엇인가요?"], ["결과 (Result)", "어떤 성과와 배움을 얻었나요?"]],
+  kpt: [["유지할 점 (Keep)", "계속 유지하고 싶은 행동이나 좋은 점은?"], ["문제점 (Problem)", "어려웠거나 개선이 필요한 점은?"], ["시도할 점 (Try)", "다음에 시도할 구체적인 행동은?"]],
   free: [["경험 이야기", "당시 상황과 인상 깊었던 순간을 자유롭게 작성하세요"], ["배운 점", "이 경험을 통해 알게 된 점이나 앞으로의 다짐은?"]]
 };
 
@@ -584,4 +584,37 @@ renderRecords();
 renderCalendar();
 updateProjectGroupButton();
 updateTitlePlaceholder(document.getElementById("recordCategory").value);
+// 홈 대시보드·온보딩에서 직접 들어올 때 해당 탭을 보여줍니다.
+// 기존 기록 데이터와 저장 로직에는 영향을 주지 않습니다.
+const entryParams = new URLSearchParams(window.location.search);
+const entryTab = entryParams.get("tab");
+if (["extract", "write", "list", "calendar"].includes(entryTab)) {
+  switchTab(entryTab);
+}
+
+// '질문으로 경험 기록하기'에서 받은 질문을 작성 화면에 안내합니다.
+if (entryTab === "write" && entryParams.get("question")) {
+  const question = entryParams.get("question").slice(0, 240);
+  selectedTemplate = "free";
+  document.querySelectorAll(".template-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.template === selectedTemplate);
+  });
+  renderTemplateFields();
+
+  const panel = document.createElement("div");
+  panel.className = "record-linked-question";
+  const heading = document.createElement("strong");
+  heading.textContent = "오늘의 질문";
+  const description = document.createElement("p");
+  description.textContent = question;
+  panel.append(heading, description);
+  const recordForm = document.getElementById("recordForm");
+  recordForm.parentNode.insertBefore(panel, recordForm);
+
+  const storyInput = document.querySelector('#dynamicFields textarea[name="field0"]');
+  if (storyInput) {
+    storyInput.placeholder = `${question}
+경험을 자유롭게 적어 보세요.`;
+  }
+}
 if (window.lucide) lucide.createIcons();
