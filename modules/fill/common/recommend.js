@@ -3,8 +3,16 @@ window.RecommendAPI = (() => {
     const s = window.StorageAPI;
     const user = s.getUser();
     const counts = s.getTagCounts();
-    let targetJob = null;
-    if (user.targetJob) targetJob = JOBS.find(j => j.id === user.targetJob || j.name === user.targetJob) || null;
+    // 직무 연결의 6개 직무가 공통 기준입니다.
+    // 기존 경험 채우기 직무 목록은 예전 데이터·화면과의 호환용으로만 사용합니다.
+    const sharedJobs = window.OPSJOB && window.OPSJOB.data && Array.isArray(window.OPSJOB.data.jobs)
+      ? window.OPSJOB.data.jobs
+      : [];
+    const legacyJobs = typeof JOBS !== "undefined" && Array.isArray(JOBS) ? JOBS : [];
+    const targetId = typeof user.targetJob === "string" ? user.targetJob.trim() : "";
+    const targetJob = targetId
+      ? [...sharedJobs, ...legacyJobs].find(job => job.id === targetId || job.name === targetId) || null
+      : null;
     if (targetJob) {
       const gaps = Object.entries(targetJob.skills)
         .map(([tag, needed]) => ({ tag, needed, level: counts[tag] || 0 }))
@@ -12,7 +20,11 @@ window.RecommendAPI = (() => {
       const gapTags = gaps.filter(x => x.level < x.needed).slice(0, 3).map(x => x.tag);
       return { targetJob, tags: gapTags, gaps, source:"job", isInterest:false };
     }
-    const interestTags = user.testResult?.tempTags?.filter(Boolean) || [];
+    const interestTags = (
+      Array.isArray(user.interestTags) && user.interestTags.length > 0
+        ? user.interestTags
+        : (user.testResult?.tempTags || [])
+    ).filter(Boolean);
     if (interestTags.length) return { targetJob:null, tags:interestTags, gaps:[], source:"interest", isInterest:true };
     const recordTags = [...new Set(window.StorageAPI.getRecords().flatMap(r => r.tags || []).filter(Boolean))];
     return { targetJob:null, tags:recordTags, gaps:[], source:recordTags.length ? "records" : "none", isInterest:false };
