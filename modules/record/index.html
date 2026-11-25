@@ -110,6 +110,7 @@
                     <option value="volunteer">봉사</option>
                     <option value="hobby">취미·자기계발</option>
                     <option value="award">수상·자격증</option>
+                    <option value="other">기타</option>
                   </select>
                 </label>
                 <label>날짜
@@ -120,6 +121,10 @@
                 <input id="recordTitle" name="title" type="text" maxlength="50" placeholder="예) 수업 발표에서 맡은 기획 및 분석 역할" required>
               </label>
               <div id="dynamicFields"></div>
+              <fieldset class="skill-tag-field">
+                <legend>경험에서 사용한 역량 <span>1개 이상 선택</span></legend>
+                <div class="skill-tag-options" id="skillTagOptions"></div>
+              </fieldset>
               <label>한 줄 요약
                 <input id="recordSummary" name="summary" type="text" maxlength="100" placeholder="이 경험을 한 문장으로 표현해보세요">
               </label>
@@ -153,6 +158,7 @@
               <option value="volunteer">봉사</option>
               <option value="hobby">취미·자기계발</option>
               <option value="award">수상·자격증</option>
+              <option value="other">기타</option>
             </select>
             <select id="recordSort" aria-label="기록 날짜 정렬">
               <option value="newest">최신순</option>
@@ -198,6 +204,8 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="../../data/tags.js"></script>
+  <script src="../../common/storage.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
