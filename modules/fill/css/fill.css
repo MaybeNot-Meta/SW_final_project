@@ -60,3 +60,478 @@
   .toolbar { grid-template-columns: minmax(0, 1fr); }
   .toolbar #filters { grid-column: auto; }
 }
+
+
+/* =============================================================
+   STEP 7-24: myfo 경험 채우기 UI 통일 (시각적 스타일만 변경)
+   데이터/검색/스크랩/참여 기록 이벤트 및 DOM ID는 유지합니다.
+   기존 공통 헤더 #header는 이 스타일의 적용 대상이 아닙니다.
+   ============================================================= */
+.shell {
+  --primary: #587be8;
+  --text: #172b4a;
+  --muted: #647899;
+  --line: #e1e8f3;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 30px 24px 80px;
+  font-family: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+.shell h1, .shell h2, .shell h3, .shell p { letter-spacing: -0.025em; }
+.shell .page-title {
+  margin: 14px 0 24px;
+  font-size: clamp(26px, 2.6vw, 32px);
+  font-weight: 800;
+  line-height: 1.3;
+}
+.shell section > h2, .shell .detail-card > h2 {
+  margin: 0 0 18px;
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+.shell > section { margin-top: 30px; }
+.shell > section:first-of-type { margin-top: 0; }
+.shell .muted { color: var(--muted); }
+.shell a { text-decoration: none; }
+
+/* 기존 '맞춤 추천 / 스크랩' 내부 이동 메뉴를 myfo 톤으로 정돈 */
+#fill-local-nav .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 28px;
+  padding: 0 0 16px;
+  border-bottom: 1px solid #e4eaf4;
+}
+#fill-local-nav .topbar > a {
+  color: #587be8;
+  font-size: 14px;
+  font-weight: 750;
+}
+#fill-local-nav .topbar nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+#fill-local-nav .topbar nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: #526482;
+  font-size: 14px;
+  font-weight: 650;
+  transition: background .18s ease, color .18s ease;
+}
+#fill-local-nav .topbar nav a:hover {
+  color: #315ed9;
+  background: #eef3ff;
+}
+
+/* 카드와 정보 계층: 기존 grid/card의 역할 및 선택자는 유지 */
+.shell .basis-card,
+.shell .detail-card,
+.shell .form-card,
+.shell .contest-card {
+  border: 1px solid #e1e8f3;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgba(32,55,92,.035);
+}
+.shell .basis-card {
+  padding: 19px 22px;
+  color: #425778;
+  line-height: 1.8;
+}
+.shell .basis-card strong { color: #1c3154; }
+.shell .grid { gap: 16px; }
+.shell > section.grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.shell .contest-card {
+  padding: 22px;
+  min-width: 0;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.shell .contest-card:hover {
+  transform: translateY(-2px);
+  border-color: #c5d5f9;
+  box-shadow: 0 10px 25px rgba(31,59,102,.08);
+}
+.shell .card-head { align-items: flex-start; gap: 14px; }
+.shell .card-head h3 { margin: 0; font-size: 17px; line-height: 1.45; font-weight: 750; }
+.shell .contest-card > p.muted { margin: 12px 0 10px; font-size: 14px; }
+.shell .tag-row { gap: 7px; margin: 14px 0 12px; }
+.shell .tag {
+  padding: 5px 10px;
+  background: #f0f4fa;
+  color: #526583;
+  font-size: 12px;
+  font-weight: 550;
+}
+.shell .reason { margin: 12px 0; color: #5b7090; font-size: 14px; line-height: 1.65; }
+.shell .badge-normal, .shell .badge-danger { flex-shrink: 0; }
+
+/* 버튼/입력 요소: 클릭 편의 및 포커스 표시 */
+.shell .scrap-btn,
+.shell .primary-btn,
+.shell .secondary-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+  padding: 9px 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+  line-height: 1.3;
+}
+.shell .primary-btn { background: #587be8; color: #fff; border-color: #587be8; }
+.shell .secondary-btn { color: #315ed9; border-color: #d3def6; background: #f5f8ff; }
+.shell .scrap-btn:hover, .shell .secondary-btn:hover { background: #f2f6ff; border-color: #a7bee9; }
+.shell .primary-btn:hover { background: #3e65dc; }
+.shell :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid rgba(88,123,232,.30);
+  outline-offset: 2px;
+}
+.shell .chip-outline { min-height: 38px; padding: 8px 13px; border-color: #dfe7f2; color: #48607e; font-size: 13px; }
+.shell .chip-outline.active { background: #eaf1ff; color: #315ed9; border-color: #7e9de9; font-weight: 700; }
+.shell .chip-outline:hover { border-color: #7e9de9; }
+
+/* 검색어 입력과 정렬 선택의 크기를 명확히 구분 */
+.shell .toolbar {
+  grid-template-columns: minmax(0,1fr) minmax(230px,320px) 152px;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+}
+.shell .toolbar #filters { align-items: center; }
+.shell .toolbar input#search,
+.shell .toolbar select#sort {
+  height: 46px;
+  min-width: 0;
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #d9e3f0;
+  background: #fff;
+  color: #233b5a;
+}
+.shell .toolbar input#search::placeholder { color: #8a9ab0; }
+
+/* 상세·참여기록·스크랩 화면에도 공통 톤 적용 */
+.shell .detail-card, .shell .form-card { padding: 24px; }
+.shell .detail-grid { align-items: start; gap: 20px; }
+.shell .detail-grid aside { position: sticky; top: 88px; }
+.shell .summary-list { row-gap: 14px; }
+.shell .record-list { display: flex; flex-direction: column; gap: 9px; }
+.shell .record-item { border-radius: 8px; }
+.shell .field label { color: #1c3154; font-size: 14px; }
+.shell :is(.form-card input,.form-card select,.form-card textarea) { min-height: 44px; border-color: #d9e3f0; font-size: 15px; }
+.shell .form-card textarea { line-height: 1.7; }
+.shell .notice { border: 1px solid #dce7fb; background: #f3f7ff; color: #415b88; }
+.shell .kanban { gap: 16px; }
+.shell .kanban-col { background: #eef3fa; border: 1px solid #e1e8f3; border-radius: 15px; padding: 14px; }
+.shell .kanban .contest-card { padding: 16px; }
+.shell a.detail-card { display: block; color: var(--text); padding: 26px; }
+.shell a.detail-card h2 { color: #21395b; }
+.shell a.detail-card:hover { border-color: #b9cbf3; transform: translateY(-2px); box-shadow: 0 9px 24px rgba(31,59,102,.07); }
+
+@media (max-width: 900px) {
+  .shell .toolbar { grid-template-columns: minmax(0,1fr) 152px; }
+  .shell .toolbar #filters { grid-column: 1/-1; }
+  .shell .detail-grid aside { position: static; }
+}
+@media (max-width: 680px) {
+  .shell { padding: 22px 16px 55px; }
+  .shell > section.grid { grid-template-columns: 1fr; }
+  .shell .grid { grid-template-columns: 1fr; }
+  #fill-local-nav .topbar { flex-wrap: wrap; align-items: flex-start; gap: 9px; }
+  #fill-local-nav .topbar nav { width: 100%; }
+  .shell .toolbar { grid-template-columns: 1fr; }
+  .shell .toolbar #filters { grid-column: auto; }
+  .shell .toolbar input#search, .shell .toolbar select#sort { width: 100%; max-width: none; }
+  .shell .detail-card, .shell .form-card { padding: 18px; }
+  .shell .kanban { grid-template-columns: 1fr; }
+}
+
+
+/* ============================================================
+   STEP 7-24B: myfo 시각 언어 정리 / 반응형 레이아웃 개선
+   작업 범위: CSS 전용. DOM, JS, data-*, 기존 ID 및 이벤트 유지.
+   ============================================================ */
+:root {
+  --primary: #587be8;
+  --bg: #f6f7fb;
+  --text: #192d4b;
+  --muted: #667a98;
+  --line: #e1e7f2;
+}
+
+/* 공통 헤더와 본문 좌우 시작점을 맞추고 가독성을 확보 */
+.shell {
+  --primary: #587be8;
+  --text: #192d4b;
+  --muted: #667a98;
+  --line: #e1e7f2;
+  max-width: 1120px;
+  padding: 32px 24px 84px;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.shell .page-title {
+  font-size: clamp(27px, 2.9vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin: 8px 0 24px;
+  color: #192d4b;
+}
+.shell section > h2,
+.shell .detail-card > h2 {
+  color: #192d4b;
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  margin-bottom: 17px;
+}
+.shell > section { margin-top: 34px; }
+.shell .muted { color: #667a98; }
+
+/* 서비스 내 이동: 헤더보다 한 단계 낮은 서브 내비게이션 */
+#fill-local-nav .topbar {
+  margin-bottom: 26px;
+  padding-bottom: 14px;
+  gap: 20px;
+}
+#fill-local-nav .topbar > a {
+  font-size: 14px;
+  font-weight: 750;
+  color: #587be8;
+}
+#fill-local-nav .topbar nav { gap: 8px; }
+#fill-local-nav .topbar nav a {
+  padding: 8px 16px;
+  min-height: 40px;
+  color: #647899;
+  border: 1px solid transparent;
+  font-weight: 650;
+}
+#fill-local-nav .topbar nav a:hover {
+  border-color: #dce5fb;
+  color: #315ed9;
+}
+body:has(#recommended) #fill-local-nav .topbar nav a[href="fill-recommend.html"],
+body:has(#scrapBoard) #fill-local-nav .topbar nav a[href="fill-scrap.html"] {
+  color: #315ed9;
+  background: #eaf0ff;
+  border-color: #dce5fb;
+}
+
+/* 메인 홈의 은은한 블루·라벤더 감성을 추천 기준 안내에 연결 */
+.shell .basis-card {
+  padding: 21px 24px;
+  border: 1px solid #dfe8fa;
+  border-radius: 16px;
+  background: linear-gradient(112deg, #edf3ff 0%, #f8f3ff 100%);
+  color: #526889;
+  box-shadow: none;
+  line-height: 1.85;
+}
+.shell .basis-card strong { color: #28456e; font-weight: 750; }
+
+/* 추천 카드: 읽기 쉬운 정보 구조와 정렬된 CTA 버튼 */
+.shell .grid { column-gap: 16px; row-gap: 16px; }
+.shell .contest-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 238px;
+  padding: 22px;
+  border: 1px solid #e0e7f2;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(25,45,75,.035);
+  background: #ffffff;
+}
+.shell .contest-card:hover {
+  border-color: #bfcff7;
+  box-shadow: 0 9px 25px rgba(49,86,157,.09);
+}
+.shell .contest-card .card-head { gap: 10px; }
+.shell .contest-card .card-head h3 {
+  flex: 1;
+  min-width: 0;
+  color: #192d4b;
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.shell .contest-card > p.muted {
+  margin: 11px 0 7px;
+  color: #6a7e9d;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.shell .contest-card .tag-row { margin: 10px 0 8px; gap: 6px; }
+.shell .tag {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #55709a;
+  background: #eef3fa;
+}
+.shell .contest-card .reason {
+  margin: 10px 0 14px;
+  color: #647a9b;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.shell .badge-normal,
+.shell .badge-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  min-width: 55px;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  word-break: normal;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 650;
+}
+.shell .badge-normal { background: #edf2f9; color: #657c9b; }
+.shell .badge-danger { background: #ffe7ec; color: #b92f50; }
+
+/* 주요/보조 동작을 색상으로 구분하면서 버튼 동작 자체는 그대로 */
+.shell .scrap-btn {
+  align-self: flex-start;
+  margin-top: auto;
+  min-height: 40px;
+  padding: 9px 15px;
+  border: 1px solid #cfdbf7;
+  border-radius: 10px;
+  background: #f6f9ff;
+  color: #315ed9;
+  font-size: 14px;
+  font-weight: 700;
+}
+.shell .scrap-btn:hover { background: #eaf1ff; border-color: #95b1f1; }
+.shell .primary-btn { background: #587be8; border-color: #587be8; color: white; }
+.shell .primary-btn:hover { background: #4169db; border-color: #4169db; }
+.shell .secondary-btn { background: #f5f8ff; border-color: #d5e0f8; color: #315ed9; }
+.shell .chip-outline {
+  padding: 9px 13px;
+  min-height: 40px;
+  color: #566b8d;
+  background: white;
+  border: 1px solid #dfe6f2;
+  font-size: 13px;
+  font-weight: 600;
+}
+.shell .chip-outline.active {
+  color: #315ed9;
+  background: #eaf1ff;
+  border-color: #7e9de9;
+}
+
+/* 필터는 한 줄/두 줄로 자연스럽게 흐르고, 아래 검색은 넓게 */
+.shell .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 18px;
+}
+.shell .toolbar #filters {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.shell .toolbar input#search {
+  grid-column: 1;
+  min-width: 0;
+  max-width: none;
+  width: 100%;
+  height: 46px;
+  padding: 10px 16px;
+  background: white;
+  border: 1px solid #d9e2f0;
+  border-radius: 10px;
+  color: #192d4b;
+  font-size: 15px;
+}
+.shell .toolbar select#sort {
+  grid-column: 2;
+  min-width: 0;
+  width: 100%;
+  height: 46px;
+  padding: 10px 12px;
+  background: white;
+  border: 1px solid #d9e2f0;
+  border-radius: 10px;
+  color: #354d6d;
+  font-size: 14px;
+}
+.shell input:focus-visible,
+.shell select:focus-visible,
+.shell textarea:focus-visible,
+.shell button:focus-visible,
+.shell a:focus-visible {
+  outline: 3px solid rgba(88,123,232,.28);
+  outline-offset: 2px;
+}
+
+/* 다른 경험 채우기 화면도 같은 디자인 원칙을 공유 */
+.shell .detail-card,
+.shell .form-card {
+  padding: 25px;
+  border-color: #e0e7f2;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(25,45,75,.035);
+}
+.shell .form-card { max-width: 850px; }
+.shell .record-item { border-left-color: #587be8; background: #f5f8ff; }
+.shell .notice { background: #eef3ff; color: #4c6491; border: 1px solid #dae5fc; }
+.shell .kanban-col { border: 1px solid #e2e9f4; background: #eef3fa; }
+.shell .kanban .contest-card { min-height: 0; padding: 17px; }
+.shell a.detail-card { color: #192d4b; }
+.shell a.detail-card:hover { border-color: #bfcff7; }
+.shell > section.grid > a.detail-card {
+  min-height: 175px;
+  border-radius: 18px;
+  padding: 27px;
+  background: linear-gradient(135deg, #ffffff 65%, #f5f7ff 100%);
+}
+.shell > section.grid > a.detail-card h2 { font-size: 21px; margin: 0 0 12px; }
+
+/* 가로폭별 카드 수/입력 크기: 주요 클릭 타깃을 유지 */
+@media (max-width: 920px) {
+  .shell #recommended, .shell #allContests { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .shell .kanban { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 680px) {
+  .shell { padding: 24px 16px 64px; }
+  #fill-local-nav .topbar { align-items: flex-start; }
+  .shell #recommended, .shell #allContests { grid-template-columns: 1fr; }
+  .shell .toolbar { grid-template-columns: 1fr; }
+  .shell .toolbar #filters { grid-column: 1; }
+  .shell .toolbar input#search,
+  .shell .toolbar select#sort { grid-column: 1; }
+  .shell .contest-card { min-height: 0; padding: 20px; }
+  .shell .kanban { grid-template-columns: 1fr; }
+  .shell .basis-card { padding: 19px; }
+  .shell .detail-card, .shell .form-card { padding: 20px; }
+}
