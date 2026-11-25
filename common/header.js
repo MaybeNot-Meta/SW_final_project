@@ -9,38 +9,25 @@ const APP_NAME = "myfo";
 (function () {
   "use strict";
 
-  // 메뉴 이름과 이동할 HTML 파일을 정의합니다.
+  // common/header.js의 위치를 기준으로 프로젝트 루트를 계산합니다.
+  // 하위 폴더의 페이지에서도 링크가 잘못된 폴더로 이동하지 않게 합니다.
+  const scriptUrl = document.currentScript && document.currentScript.src;
+  const siteRoot = scriptUrl
+    ? new URL("../", scriptUrl)
+    : new URL("./", document.baseURI);
+
+  function siteUrl(relativePath) {
+    return new URL(relativePath, siteRoot).href;
+  }
+
+  // 실제 통합된 페이지의 주소입니다.
   const MENU_ITEMS = [
-    {
-      label: "홈",
-      href: "index.html",
-      icon: "house"
-    },
-    {
-      label: "경험 기록",
-      href: "record-list.html",
-      icon: "notebook-pen"
-    },
-    {
-      label: "직무 연결",
-      href: "job-match.html",
-      icon: "briefcase-business"
-    },
-    {
-      label: "포트폴리오",
-      href: "portfolio-group.html",
-      icon: "folder-open"
-    },
-    {
-      label: "경험 채우기",
-      href: "fill-recommend.html",
-      icon: "compass"
-    },
-    {
-      label: "마이페이지",
-      href: "mypage.html",
-      icon: "circle-user-round"
-    }
+    { label: "홈", href: "index.html", icon: "house" },
+    { label: "경험 기록", href: "modules/record/index.html", icon: "notebook-pen", section: "modules/record/" },
+    { label: "직무 연결", href: "modules/job/index.html", icon: "briefcase-business", section: "modules/job/" },
+    { label: "포트폴리오", href: "portfolio/index.html", icon: "folder-open", section: "portfolio/" },
+    { label: "경험 채우기", href: "modules/fill/fill-recommend.html", icon: "compass", section: "modules/fill/" },
+    { label: "마이페이지", href: "mypage.html", icon: "circle-user-round" }
   ];
 
   // Lucide 아이콘이 사용할 요소를 생성합니다.
@@ -54,19 +41,25 @@ const APP_NAME = "myfo";
     return icon;
   }
 
-  // 현재 브라우저에서 열려 있는 HTML 파일명을 반환합니다.
+  // 프로젝트 루트 기준의 현재 페이지 경로를 반환합니다.
   function getCurrentPage() {
-    const pathname = window.location.pathname;
-    const filename = pathname.split("/").pop();
+    const rootPath = siteRoot.pathname;
+    const currentPath = window.location.pathname;
 
-    return filename || "index.html";
+    if (currentPath === rootPath || currentPath === rootPath.slice(0, -1)) {
+      return "index.html";
+    }
+
+    return currentPath.startsWith(rootPath)
+      ? decodeURIComponent(currentPath.slice(rootPath.length))
+      : decodeURIComponent(currentPath.replace(/^\//, ""));
   }
 
   // 메뉴 링크 하나를 생성합니다.
   function createMenuLink(item, currentPage) {
     const link = document.createElement("a");
 
-    link.href = item.href;
+    link.href = siteUrl(item.href);
     link.className = "site-header-link";
 
     link.appendChild(createIcon(item.icon));
@@ -77,7 +70,7 @@ const APP_NAME = "myfo";
     link.appendChild(label);
 
     // 현재 페이지와 연결된 메뉴를 강조합니다.
-    if (item.href === currentPage) {
+    if (item.href === currentPage || (item.section && currentPage.startsWith(item.section))) {
       link.classList.add("is-current");
       link.setAttribute("aria-current", "page");
     }
@@ -114,7 +107,7 @@ const APP_NAME = "myfo";
 
     // 서비스 로고를 생성합니다.
     const logo = document.createElement("a");
-    logo.href = "index.html";
+    logo.href = siteUrl("index.html");
     logo.className = "site-header-brand";
     logo.setAttribute("aria-label", APP_NAME + " 홈으로 이동");
 
@@ -137,7 +130,7 @@ const APP_NAME = "myfo";
       // 첫 방문 사용자에게는 시작하기 버튼만 표시합니다.
       const startLink = document.createElement("a");
 
-      startLink.href = "index.html#onboarding";
+      startLink.href = siteUrl("index.html#onboarding");
       startLink.className = "btn btn-primary site-header-start";
       startLink.textContent = "시작하기";
 
