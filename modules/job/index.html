@@ -11,11 +11,16 @@
     <script src="./data/jobs.js"></script>
     <script src="./data/contests.js"></script>
     <script src="./data/missions.js"></script>
-    <script src="./common/storage.js"></script>
+    <!-- myfo 공통 데이터 원본을 직접 읽습니다. 별도 저장소는 로드하지 않습니다. -->
+    <script src="../../data/tags.js"></script>
+    <script src="../../common/storage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="./job-connection.js"></script>
     <script>
-      window.OPSJOB.mountJobConnection(document.querySelector("[data-job-connection]"));
+      window.OPSJOB.mountJobConnection(
+        document.querySelector("[data-job-connection]"),
+        { getUser, getRecords, getTagCounts, saveUser }
+      );
     </script>
   </body>
 </html>

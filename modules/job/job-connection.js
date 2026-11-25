@@ -29,8 +29,17 @@ function formatPercent(value) {
   return `${Math.round(value * 100)}%`;
 }
 
+// myfo 온보딩의 interestTags를 우선 사용하고 기존 팀원 데이터도 지원합니다.
+function getInterestTags(user) {
+  if (user?.userType !== 1) return [];
+  if (Array.isArray(user.interestTags) && user.interestTags.length > 0) {
+    return user.interestTags;
+  }
+  return Array.isArray(user.testResult?.tempTags) ? user.testResult.tempTags : [];
+}
+
 function getInterestWeight(user, records) {
-  if (user.userType !== 1 || !Array.isArray(user.testResult?.tempTags) || user.testResult.tempTags.length === 0) {
+  if (getInterestTags(user).length === 0) {
     return 0;
   }
   return INTEREST_PROFILE_RECORD_EQUIVALENT / (records.length + INTEREST_PROFILE_RECORD_EQUIVALENT);
@@ -45,7 +54,7 @@ function calculateJobMatch(job, user, records, tagCounts) {
     return 0;
   }
 
-  const interestTags = new Set(user.userType === 1 ? user.testResult?.tempTags || [] : []);
+  const interestTags = new Set(getInterestTags(user));
   const interestWeight = getInterestWeight(user, records);
   const total = skills.reduce((sum, [tag, requiredLevel]) => {
     const rawScore = Math.min((tagCounts[tag] || 0) / requiredLevel, 1);
@@ -115,7 +124,7 @@ function renderProfile(state) {
   const profile = usedTags.length
     ? `<div class="jc-profile-tags">${tagPills(usedTags, state.tagCounts)}</div>`
     : `<p class="jc-empty">아직 등록된 역량 기록이 없습니다. 기록에 역량 태그를 추가하면 직무 매칭에 반영됩니다.</p>`;
-  const interestNotice = state.user.userType === 1 && (state.user.testResult?.tempTags || []).length
+  const interestNotice = getInterestTags(state.user).length > 0
     ? `<p class="jc-small-note">유형 1: 테스트 임시 관심 태그는 경험 기록이 쌓일수록 매칭 반영 비중이 줄어듭니다.</p>`
     : "";
   return `<section class="jc-card" aria-labelledby="jc-profile-title">
