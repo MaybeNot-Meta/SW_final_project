@@ -169,10 +169,11 @@ function renderMatching(state) {
 
   return `<section class="jc-panel" aria-label="직무 매칭 결과">
     ${renderProfile(state)}
+    <div class="jc-notice jc-notice--info"><p><strong>매칭률 안내:</strong> 저장한 경험의 역량 태그(유형 1은 관심 태그도 반영)와 직무별 필요 태그를 비교한 참고 점수예요. 실제 업무 능력을 평가한 결과는 아니에요.</p></div>
     ${state.records.length < 3 ? `<div class="jc-notice jc-notice--info"><p><strong>경험이 3개 미만입니다.</strong> 경험 기록을 더 등록하면 현재 역량을 바탕으로 한 분석이 구체적이 됩니다.</p></div>` : ""}
     <div class="jc-section-heading">
       <h2>나와 가까운 직무</h2>
-      <p>필요 역량별 충족도를 평균해 높은 순으로 표시합니다.</p>
+      <p>필요 역량별 충족도를 평균해 높은 순으로 표시합니다. (참고 점수)</p>
     </div>
     ${cards ? `<div class="jc-job-list">${cards}</div>` : `<p class="jc-empty">표시할 직무 데이터가 없습니다.</p>`}
   </section>`;
@@ -234,7 +235,7 @@ function renderStrengths(strengths, records) {
         <span class="jc-status jc-status--enough">강점 · ${skill.current}/${skill.required}</span>
       </div>
       <p class="jc-evidence">근거 경험: ${escapeHtml(evidenceText)}</p>
-      <button class="jc-button jc-button--secondary" type="button" data-action="star" data-tag="${escapeHtml(skill.tag)}">STAR 정리하기</button>
+      <button class="jc-button jc-button--secondary" type="button" data-action="star" data-tag="${escapeHtml(skill.tag)}" data-record-id="${escapeHtml(evidence[0]?.id || "")}">STAR 정리하기</button>
     </div>`;
   }).join("")}</div>`;
 }
@@ -347,7 +348,7 @@ function renderAnalysis(state) {
       ${renderJobChips(state)}
       <div class="jc-analysis-summary jc-section-spaced">
         <div><h2>${escapeHtml(job.name)}</h2><p>${escapeHtml(job.desc)}</p></div>
-        <div class="jc-score">${formatPercent(score)}<span class="jc-small-note"> 매칭</span></div>
+        <div class="jc-score">${formatPercent(score)}<span class="jc-small-note"> 매칭 · 참고 점수</span></div>
       </div>
       <div class="jc-actions jc-section-spaced">
         <button class="jc-button" type="button" data-action="set-target" data-job-id="${escapeHtml(job.id)}" aria-pressed="${isTarget}">${isTarget ? "목표 직무로 설정됨" : "목표 직무로 설정"}</button>
@@ -536,7 +537,8 @@ function mountJobConnection(root, storageApi = storage) {
     } else if (action === "star") {
       emitNavigation("portfolio-star", {
         jobId: state.selectedJobId,
-        tag: button.dataset.tag
+        tag: button.dataset.tag,
+        recordId: button.dataset.recordId
       });
       state.feedback = "STAR 정리 화면으로 이동 요청을 전달했습니다. 포트폴리오 메뉴와 연결됩니다.";
     } else if (action === "set-target") {

@@ -294,3 +294,8 @@
   .pf-hero h1 { font-size: 23px; }
   .pf-steps { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* HCI UX: 기록 목록에서 묶은 뒤 이동한 프로젝트와 제목 편집 가능성 안내 */
+.pf-created-notice { grid-column: 1 / -1; margin: 0 0 8px; padding: 12px 14px; border: 1px solid var(--pf-blue-line); border-radius: 10px; background: var(--pf-blue-soft); color: var(--pf-ink); font-size: 13px; line-height: 1.5; }
+.pf-project.is-new { border-color: var(--pf-blue); box-shadow: 0 0 0 2px var(--pf-blue-soft), 0 8px 24px rgba(54,107,189,.08); }
+.pf-project.is-new .pf-project-title { border-color: var(--pf-blue-line); background: #fff; cursor: text; }

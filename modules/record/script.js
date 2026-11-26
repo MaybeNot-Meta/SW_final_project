@@ -62,7 +62,42 @@ function loadUnifiedRecords() {
 let records = loadUnifiedRecords();
 
 let selectedCategory = "class";
+// 이미 저장한 "경험 꺼내기" 기록을 다시 방문했을 때도 보여 줍니다.
+// 신규 응답은 직무 매칭을 누르기 전까지 기존 기록을 변경하지 않습니다.
+// 저장된 경험·태그·ID를 같은 행에 연결하여 재방문 및 수정 시에도 보존합니다.
+const extractionSavedRows = getRecords().filter(record =>
+  record.source === "경험꺼내기" && categoryData[record.recordCategory] && typeof record.content === "string"
+);
 let extractedExperiences = {};
+let extractedTagChoices = {};
+let extractedRecordIds = {};
+extractionSavedRows.forEach(record => {
+  const category = record.recordCategory;
+  (extractedExperiences[category] ||= []).push(record.content);
+  (extractedTagChoices[category] ||= []).push(Array.isArray(record.tags) ? [...record.tags] : []);
+  (extractedRecordIds[category] ||= []).push(record.id);
+});
+// 다른 탭에서 저장한 경험 꺼내기 기록을 수정·삭제할 때 입력 캐시도 동기화합니다.
+// 삭제 취소나 아직 저장하지 않은 다른 입력은 건드리지 않습니다.
+function removeExtractedCacheById(id) {
+  for (const [category, ids] of Object.entries(extractedRecordIds)) {
+    const index = ids.findIndex(item => String(item) === String(id));
+    if (index < 0) continue;
+    ids.splice(index, 1);
+    extractedExperiences[category]?.splice(index, 1);
+    extractedTagChoices[category]?.splice(index, 1);
+    return;
+  }
+}
+function syncExtractedCacheRecord(record) {
+  if (!record || record.source !== "경험꺼내기") return;
+  removeExtractedCacheById(record.id);
+  const category = categoryData[record.recordCategory] ? record.recordCategory : "other";
+  (extractedExperiences[category] ||= []).push(record.content || "");
+  (extractedTagChoices[category] ||= []).push([...(record.tags || [])]);
+  (extractedRecordIds[category] ||= []).push(record.id);
+}
+
 let selectedRecords = new Set(); // ID는 문자열로 통일해 비교합니다.
 let selectedTemplate = "star";
 let viewDate = new Date();
@@ -134,57 +169,107 @@ function updateGuide() {
   if (window.lucide) lucide.createIcons();
 }
 
+// 사용자가 태그를 직접 조정할 수 있습니다. 자동 추천은 '수정 전' 초안에만 적용됩니다.
+function setExperienceTagSelection(wrapper, tags) {
+  const chosen = new Set(tags);
+  wrapper.querySelectorAll('.experience-tag-options input[type="checkbox"]').forEach(input => {
+    input.checked = chosen.has(input.value);
+  });
+  const summary = wrapper.querySelector('.experience-tag-count');
+  if (summary) summary.textContent = `${chosen.size}개 선택`;
+}
+
 function addExperienceInput(number, value = "") {
   const inputIndex = number - 1;
   const data = categoryData[selectedCategory];
+  const category = selectedCategory;
   const wrapper = document.createElement("div");
   wrapper.className = "experience-input";
   const deleteButton = number === 1
     ? ""
-    : `<button type="button" class="experience-delete-button" aria-label="경험 ${number} 삭제"><i data-lucide="trash-2"></i></button>`;
-  wrapper.innerHTML = `<div class="experience-input-header"><span>${number}</span><strong>경험 ${number}</strong>${deleteButton}</div><textarea class="experience-answer" data-index="${inputIndex}" maxlength="180" placeholder="${escapeHtml(data.questions[0])}"></textarea>`;
+    : `<button type="button" class="experience-delete-button" aria-label="경험 ${number} 삭제" title="경험 입력 지우기"><i data-lucide="trash-2"></i></button>`;
+  const savedTags = extractedTagChoices[category]?.[inputIndex];
+  const initialTags = Array.isArray(savedTags)
+    ? savedTags : (value.trim() ? extractionTags(category, value) : []);
+  (extractedTagChoices[category] ||= [])[inputIndex] = [...initialTags];
+  const tagOptions = TAGS.map(tag => `<label class="skill-tag-choice experience-tag-choice"><input type="checkbox" value="${escapeHtml(tag)}" ${initialTags.includes(tag) ? "checked" : ""}>${escapeHtml(tag)}</label>`).join("");
+  wrapper.innerHTML = `<div class="experience-input-header"><span>${number}</span><strong>경험 ${number}</strong>${deleteButton}</div>
+    <textarea class="experience-answer" data-index="${inputIndex}" maxlength="180" aria-label="${escapeHtml(data.label)} 경험 ${number} 설명" placeholder="${escapeHtml(data.questions[0])}"></textarea>
+    <div class="experience-tag-editor"><div class="experience-tag-heading"><strong>역량 태그</strong><span class="experience-tag-count">${initialTags.length}개 선택</span></div>
+    <div class="experience-tag-options" role="group" aria-label="경험 ${number} 역량 태그">${tagOptions}</div></div>`;
   document.getElementById("experienceInputList").appendChild(wrapper);
   const textarea = wrapper.querySelector("textarea");
   textarea.value = value;
-  textarea.addEventListener("input", () => updateExperienceCount());
+  textarea.addEventListener("input", () => {
+    // 기존 저장 기록 또는 사용자 직접 선택은 자동 추천으로 덮어쓰지 않습니다.
+    if (!wrapper.dataset.tagsEdited && !extractedRecordIds[category]?.[inputIndex]) {
+      const suggestion = textarea.value.trim() ? extractionTags(category, textarea.value) : [];
+      extractedTagChoices[category][inputIndex] = [...suggestion];
+      setExperienceTagSelection(wrapper, suggestion);
+    }
+    updateExperienceCount();
+  });
+  wrapper.querySelectorAll('.experience-tag-options input').forEach(input => {
+    input.addEventListener('change', () => {
+      wrapper.dataset.tagsEdited = 'true';
+      extractedTagChoices[category][inputIndex] = Array.from(wrapper.querySelectorAll('.experience-tag-options input:checked'))
+        .map(checkbox => checkbox.value);
+      setExperienceTagSelection(wrapper, extractedTagChoices[category][inputIndex]);
+      updateExperienceCount();
+    });
+  });
   const deleteButtonElement = wrapper.querySelector(".experience-delete-button");
-  if (deleteButtonElement) {
-    deleteButtonElement.addEventListener("click", () => deleteExperienceInput(inputIndex));
-  }
+  if (deleteButtonElement) deleteButtonElement.addEventListener("click", () => deleteExperienceInput(inputIndex));
 }
 
 document.getElementById("addExperienceButton").addEventListener("click", () => {
-  const currentCount = document.querySelectorAll(".experience-answer").length;
+  // 현재 입력을 저장한 다음 새 입력칸을 만듭니다.
+  updateExperienceCount();
   const saved = extractedExperiences[selectedCategory] || [""];
   saved.push("");
   extractedExperiences[selectedCategory] = saved;
-  addExperienceInput(currentCount + 1);
+  (extractedTagChoices[selectedCategory] ||= []).push([]);
+  (extractedRecordIds[selectedCategory] ||= []).push(null);
+  addExperienceInput(saved.length);
   updateExperienceCount();
   if (window.lucide) lucide.createIcons();
 });
 
 function deleteExperienceInput(index) {
-  const values = Array.from(document.querySelectorAll(".experience-answer")).map(textarea => textarea.value);
+  updateExperienceCount();
+  const values = [...(extractedExperiences[selectedCategory] || [])];
   values.splice(index, 1);
+  (extractedTagChoices[selectedCategory] ||= []).splice(index, 1);
+  (extractedRecordIds[selectedCategory] ||= []).splice(index, 1);
   if (values.length === 0) values.push("");
   extractedExperiences[selectedCategory] = values;
   document.getElementById("experienceInputList").innerHTML = "";
   values.forEach((value, valueIndex) => addExperienceInput(valueIndex + 1, value));
   updateExperienceCount();
   if (window.lucide) lucide.createIcons();
-  showToast("경험 입력을 삭제했어요");
+  showToast("입력칸을 정리했어요. 이미 저장한 기록은 기록 목록에 그대로 남아요.");
 }
 
 function updateExperienceCount() {
   const answers = Array.from(document.querySelectorAll(".experience-answer"));
   extractedExperiences[selectedCategory] = answers.map(answer => answer.value);
-  const filledCount = Object.values(extractedExperiences)
-    .flat()
-    .filter(answer => typeof answer === "string" && answer.trim()).length;
-  document.getElementById("experienceCount").textContent = `${filledCount} / 3 경험 입력`;
+  let filledCount = 0;
+  let untaggedCount = 0;
+  Object.entries(extractedExperiences).forEach(([category, values]) => {
+    (values || []).forEach((value, index) => {
+      if (!String(value || "").trim()) return;
+      filledCount++;
+      if (!(extractedTagChoices[category]?.[index] || []).length) untaggedCount++;
+    });
+  });
+  const count = document.getElementById("experienceCount");
+  const countMessage = `${filledCount} / 3 경험 입력${untaggedCount ? ` · 태그 미선택 ${untaggedCount}개` : ""}`;
+  if (count.textContent !== countMessage) count.textContent = countMessage;
   const jobMatchButton = document.getElementById("jobMatchButton");
-  jobMatchButton.disabled = filledCount < 3;
-  jobMatchButton.title = jobMatchButton.disabled ? "세 가지 경험을 모두 입력해주세요" : "직무 매칭 기능은 별도 파트입니다";
+  jobMatchButton.disabled = filledCount < 3 || untaggedCount > 0;
+  jobMatchButton.title = filledCount < 3 ? "세 가지 경험을 입력해주세요"
+    : untaggedCount ? "각 경험에서 역량 태그를 한 개 이상 선택해주세요"
+    : "선택한 역량 태그와 경험을 저장하고 직무 매칭으로 이동";
 }
 
 function startWriting() {
@@ -204,10 +289,78 @@ document.getElementById("recordCategory").addEventListener("change", event => {
 });
 
 document.getElementById("startRecord").addEventListener("click", startWriting);
+// 경험 꺼내기: 공통 역량 태그 목록에 맞춰 초안을 추천합니다.
+// 추천된 태그를 사용자가 직접 바꾸면 해당 선택을 우선합니다.
+const extractionTagPatterns = [
+  ["개발", /개발|구현|코딩|코드|프로그래밍|자바스크립트|javascript|python|파이썬|웹사이트|github|깃허브/i],
+  ["디자인", /디자인|시각화|ui|ux|피그마|figma|레이아웃|시안/i],
+  ["기획", /기획|계획|아이디어|설계|전략|구성|분석|운영/i],
+  ["영상", /영상|촬영|편집|유튜브|동영상/i],
+  ["글쓰기", /글쓰기|글을|글쓴|보고서|문서|기사|논술|작성/i],
+  ["협업", /협업|팀원|팀플|조별|모둠|협력|공동|조율|소통/i],
+  ["사용자 리서치", /리서치|조사|설문|인터뷰|사용자|고객|피드백/i],
+  ["데이터 분석", /데이터|통계|엑셀|분석|머신러닝|실험|시각화/i],
+  ["발표", /발표|프레젠테이션|ppt|설명회|시연/i]
+];
+const extractionFallbackTags = {
+  class: "기획", club: "협업", contest: "기획", work: "협업",
+  volunteer: "협업", hobby: "기획", award: "기획", other: "기획"
+};
+
+function extractionTags(category, content) {
+  const matched = extractionTagPatterns
+    .filter(([, pattern]) => pattern.test(content))
+    .map(([tag]) => tag)
+    .filter(tag => TAGS.includes(tag));
+  return matched.length ? matched : [extractionFallbackTags[category] || "기획"];
+}
+
+function saveExtractedExperiences() {
+  updateExperienceCount();
+  const existing = getRecords();
+  let added = 0;
+  for (const [category, answers] of Object.entries(extractedExperiences)) {
+    if (!categoryData[category] || !Array.isArray(answers)) continue;
+    for (let index = 0; index < answers.length; index++) {
+      const content = String(answers[index] || "").trim();
+      if (!content) continue;
+      const tags = (extractedTagChoices[category]?.[index] || []).filter(tag => TAGS.includes(tag));
+      if (!tags.length) throw new Error("각 경험에서 역량 태그를 하나 이상 선택해 주세요.");
+      const savedId = extractedRecordIds[category]?.[index];
+      const original = existing.find(record => record.id === savedId && record.source === "경험꺼내기");
+      const sameContent = existing.find(record => record.source === "경험꺼내기"
+        && record.recordCategory === category && String(record.content || "").trim() === content);
+      const previous = original || sameContent;
+      const record = saveRecord({
+        ...(previous || {}),
+        source: "경험꺼내기", recordCategory: category, recordUiTemplate: "free",
+        title: content.length > 48 ? `${content.slice(0, 48)}…` : content,
+        category: categoryData[category].label, date: previous?.date || today(),
+        content, summary: content.slice(0, 160), fields: [content, ""], tags
+      });
+      (extractedRecordIds[category] ||= [])[index] = record.id;
+      // 저장된 행은 수정할 때 동일한 ID를 사용하여 프로젝트 연결도 보존합니다.
+      if (!previous) added++;
+      if (!existing.find(item => item.id === record.id)) existing.push(record);
+    }
+  }
+  return added;
+}
+
 document.getElementById("jobMatchButton").addEventListener("click", () => {
-  if (!document.getElementById("jobMatchButton").disabled) window.location.href = "../job/index.html";
+  if (document.getElementById("jobMatchButton").disabled) return;
+  try {
+    saveExtractedExperiences();
+    window.location.assign("../job/index.html");
+  } catch (error) {
+    showToast(error.message || "경험을 저장하지 못했어요");
+  }
 });
 document.getElementById("quickAddButton").addEventListener("click", () => {
+  // 새 기록은 기존 기록 편집 상태를 절대 덮어쓰지 않습니다.
+  editingId = null;
+  recordForm.reset();
+  document.getElementById("editorTitle").textContent = "새 경험 기록";
   selectedTemplate = "star";
   document.querySelectorAll(".template-item").forEach(item => item.classList.toggle("active", item.dataset.template === "star"));
   startWriting();
@@ -252,18 +405,58 @@ function setSelectedSkillTags(tags) {
   });
 }
 
+function setRecordSaveStatus(message) {
+  const status = document.getElementById("saveStatus");
+  status.textContent = message;
+}
+
+// 직접 임시저장할 때만 저장 완료로 표시합니다. 그 전에는 오해를 줄이도록 작성 중으로 표시합니다.
+const recordForm = document.getElementById("recordForm");
+recordForm.addEventListener("input", () => setRecordSaveStatus("작성 중 · 미저장"));
+recordForm.addEventListener("change", () => setRecordSaveStatus("작성 중 · 미저장"));
 document.getElementById("saveDraft").addEventListener("click", () => {
-  saveDraft();
-  showToast("임시저장했어요");
+  try {
+    saveDraft();
+    showToast("임시저장했어요");
+  } catch (error) {
+    setRecordSaveStatus("임시저장 실패");
+    showToast(error.message || "임시저장에 실패했어요");
+  }
 });
 
 function saveDraft() {
-  const form = new FormData(document.getElementById("recordForm"));
+  const form = new FormData(recordForm);
   const draft = Object.fromEntries(form.entries());
   draft.template = selectedTemplate;
+  draft.skillTags = getSelectedSkillTags(); // 여러 태그 선택도 모두 복원 가능하게 저장
+  draft.editingId = editingId; // 기존 기록을 편집 중이면 같은 기록의 초안으로 복원
   localStorage.setItem("growpath-draft", JSON.stringify(draft));
-  document.getElementById("saveStatus").innerHTML = '<i data-lucide="cloud"></i>방금 임시저장';
-  if (window.lucide) lucide.createIcons();
+  setRecordSaveStatus("임시저장 완료");
+}
+
+function restoreDraft() {
+  let draft;
+  try { draft = JSON.parse(localStorage.getItem("growpath-draft") || "null"); }
+  catch (error) { return; }
+  if (!draft || typeof draft !== "object" || Array.isArray(draft)) return;
+  selectedTemplate = templateFields[draft.template] ? draft.template : selectedTemplate;
+  editingId = draft.editingId != null && getRecord(draft.editingId) ? draft.editingId : null;
+  document.getElementById("editorTitle").textContent = editingId !== null ? "기록 수정" : "새 경험 기록";
+  document.querySelectorAll(".template-item").forEach(item =>
+    item.classList.toggle("active", item.dataset.template === selectedTemplate));
+  renderTemplateFields();
+  for (const [id, value] of Object.entries({recordCategory: draft.category, recordDate: draft.date,
+    recordTitle: draft.title, recordSummary: draft.summary})) {
+    const input = document.getElementById(id);
+    if (input && typeof value === "string") input.value = value;
+  }
+  updateTitlePlaceholder(document.getElementById("recordCategory").value);
+  templateFields[selectedTemplate].forEach((_, index) => {
+    const field = document.querySelector(`[name="field${index}"]`);
+    if (field && typeof draft[`field${index}`] === "string") field.value = draft[`field${index}`];
+  });
+  setSelectedSkillTags(Array.isArray(draft.skillTags) ? draft.skillTags : (draft.skillTag ? [draft.skillTag] : []));
+  setRecordSaveStatus("임시저장본 불러옴");
 }
 
 document.getElementById("recordForm").addEventListener("submit", event => {
@@ -289,7 +482,7 @@ document.getElementById("recordForm").addEventListener("submit", event => {
   const content = fields.filter(Boolean).join("\n\n") || summary;
 
   try {
-    saveRecord({
+    const savedRecord = saveRecord({
       ...(previous || {}),
       ...(editingId !== null ? { id: editingId } : {}),
       source: previous?.source || "기록",
@@ -305,6 +498,7 @@ document.getElementById("recordForm").addEventListener("submit", event => {
       fields,
       tags
     });
+    if (previous?.source === "경험꺼내기") syncExtractedCacheRecord(savedRecord);
   } catch (error) {
     showToast(error.message || "경험 저장에 실패했어요");
     return;
@@ -317,6 +511,7 @@ document.getElementById("recordForm").addEventListener("submit", event => {
   setSelectedSkillTags([]);
   document.getElementById("editorTitle").textContent = "새 경험 기록";
   localStorage.removeItem("growpath-draft");
+  setRecordSaveStatus("임시저장 전");
   renderTemplateFields();
   updateProjectGroupButton();
   renderRecords();
@@ -354,7 +549,7 @@ function renderRecords(query = "") {
         <input class="record-select" type="checkbox" aria-label="${escapeHtml(record.title)} 선택" data-select="${record.id}" ${selectedRecords.has(String(record.id)) ? "checked" : ""}>
         <div class="record-date" ${dateStyle}><strong>${date.getDate()}</strong><small>${String(date.getMonth() + 1).padStart(2, "0")}월</small></div>
         <div class="record-info"><h3><button type="button" class="record-title-button" data-view="${record.id}" aria-label="${escapeHtml(record.title)} 내용 보기">${escapeHtml(record.title)}</button></h3><p>${escapeHtml(record.summary || record.fields.join(" · "))}</p><div class="record-tags">${(record.tags || [categoryData[record.category].label]).map(tag => `<span class="record-tag">${escapeHtml(tag)}</span>`).join("")}</div></div>
-        <div class="record-actions"><button class="icon-button" aria-label="기록 편집" data-edit="${record.id}"><i data-lucide="pencil"></i></button><button class="icon-button" aria-label="기록 삭제" data-delete="${record.id}"><i data-lucide="trash-2"></i></button></div>
+        <div class="record-actions"><button class="icon-button" aria-label="기록 편집" title="기록 편집" data-edit="${record.id}"><i data-lucide="pencil"></i></button><button class="icon-button" aria-label="기록 삭제" title="기록 삭제" data-delete="${record.id}"><i data-lucide="trash-2"></i></button></div>
       </article>`;
     }).join("");
   }
@@ -372,10 +567,13 @@ function renderRecords(query = "") {
     const id = button.dataset.delete;
     const realId = records.find(item => String(item.id) === id)?.id;
     if (realId === undefined) return;
+    const record = records.find(item => String(item.id) === id);
+    if (!window.confirm(`'${record?.title || "이 기록"}'을 삭제할까요?\n삭제하면 프로젝트와의 연결도 해제되며 복구할 수 없어요.`)) return;
     if (!deleteRecord(realId)) {
       showToast("기록 삭제에 실패했어요");
       return;
     }
+    if (record?.source === "경험꺼내기") removeExtractedCacheById(realId);
     records = loadUnifiedRecords();
     selectedRecords.delete(id);
     updateProjectGroupButton();
@@ -390,7 +588,7 @@ function renderRecords(query = "") {
     const record = records.find(item => String(item.id) === button.dataset.edit);
     if (!record) return;
     editingId = record.id;
-    selectedTemplate = record.template || "star";
+    selectedTemplate = templateFields[record.recordUiTemplate] ? record.recordUiTemplate : (templateFields[record.template] ? record.template : "star");
     switchTab("write");
     document.querySelectorAll(".template-item").forEach(item => item.classList.toggle("active", item.dataset.template === selectedTemplate));
     document.getElementById("recordCategory").value = record.category;
@@ -412,7 +610,27 @@ document.getElementById("recordSearch").addEventListener("input", event => rende
 document.getElementById("categoryFilter").addEventListener("change", () => renderRecords(document.getElementById("recordSearch").value));
 document.getElementById("recordSort").addEventListener("change", () => renderRecords(document.getElementById("recordSearch").value));
 document.getElementById("projectGroupButton").addEventListener("click", () => {
-  if (selectedRecords.size > 0) showToast(`${selectedRecords.size}개 기록을 프로젝트로 묶을 준비가 되었어요`);
+  if (!selectedRecords.size) return;
+  // 기록 ID는 비교할 때만 문자열로 사용하고 저장 시에는 원본 ID를 보존합니다.
+  const selected = getRecords().filter(record => selectedRecords.has(String(record.id)));
+  if (!selected.length) {
+    showToast("선택한 기록을 찾을 수 없어요");
+    return;
+  }
+  const groupedIds = new Set(getProjects().flatMap(project => (project.recordIds || []).map(String)));
+  if (selected.some(record => groupedIds.has(String(record.id)))) {
+    showToast("이미 묶인 기록이 있어요. 프로젝트 화면에서 관리해 주세요");
+    return; // 기존 프로젝트의 기록을 실수로 이동/중복시키지 않습니다.
+  }
+  try {
+    const project = saveProject({
+      title: selected[0].title + (selected.length > 1 ? ` 외 ${selected.length - 1}개` : ""),
+      recordIds: selected.map(record => record.id)
+    });
+    window.location.assign(`../../portfolio/index.html?project=${encodeURIComponent(project.id)}`);
+  } catch (error) {
+    showToast(error.message || "프로젝트를 만들지 못했어요");
+  }
 });
 
 let recordViewTrigger = null;
@@ -424,7 +642,7 @@ function openRecordView(id) {
   const category = categoryData[record.category] || { label: "기타", light: "#edf3f8", text: "#53647a" };
   const date = new Date(`${record.date}T12:00:00`);
   const dateText = `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-  const fieldDefinitions = templateFields[record.template] || templateFields.star;
+  const fieldDefinitions = templateFields[record.recordUiTemplate] || templateFields[record.template] || templateFields.star;
   const fields = fieldDefinitions.map(([label], index) => `
     <div class="record-view-field">
       <strong>${escapeHtml(label)}</strong>
@@ -580,6 +798,7 @@ function showToast(message) {
 updateGuide();
 renderTemplateFields();
 renderSkillTags();
+restoreDraft();
 renderRecords();
 renderCalendar();
 updateProjectGroupButton();

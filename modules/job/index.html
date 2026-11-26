@@ -27,6 +27,20 @@
     <script src="../../common/header.js"></script>
     <script src="./job-connection.js"></script>
     <script>
+      // 팀원 모듈이 보내는 이동 이벤트를 통합 사이트의 실제 화면과 연결합니다.
+      document.addEventListener("selfdev:navigate", (event) => {
+        const detail = event.detail || {};
+        if (detail.destination === "experience-extraction") {
+          window.location.assign("../record/index.html?tab=extract");
+        } else if (detail.destination === "portfolio-star") {
+          // 화면에 근거 경험으로 표시된 첫 기록을 정확히 전달합니다.
+          const evidence = getRecords().find(record => String(record.id) === String(detail.recordId || ""))
+            || getRecords().find(record => Array.isArray(record.tags) && record.tags.includes(detail.tag));
+          if (evidence) {
+            window.location.assign(`../../portfolio/star.html?record=${encodeURIComponent(evidence.id)}`);
+          }
+        }
+      });
       window.OPSJOB.mountJobConnection(
         document.querySelector("[data-job-connection]"),
         { getUser, getRecords, getTagCounts, saveUser }

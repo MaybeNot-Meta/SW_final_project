@@ -343,6 +343,13 @@
     // 상세 정보 입력이 끝나기 전에는 user 키를 저장하지 않습니다.
     // 그래야 두 유형 모두 홈으로 진입하는 흐름과 기존 사용자 데이터를 보존합니다.
     pendingUserData = userData;
+    // 진행할 화면이 버튼 문구에 드러나도록 안내합니다. 이동/저장 로직은 유지합니다.
+    const profileSubmit = document.getElementById("home-profile-submit");
+    if (profileSubmit) profileSubmit.textContent = userData.userType === 2
+      ? "저장하고 경험 꺼내기" : "저장하고 홈으로";
+    const profileSkip = document.getElementById("home-profile-skip");
+    if (profileSkip) profileSkip.textContent = userData.userType === 2
+      ? "건너뛰고 경험 꺼내기" : "건너뛰기";
     onboarding.hidden = true;
     profileStep.hidden = false;
     dashboard.hidden = true;
@@ -354,8 +361,15 @@
   function completeOnboarding(profile) {
     if (!pendingUserData) return;
     try {
+      const completedType = pendingUserData.userType;
       saveUser({ ...pendingUserData, profile: profile || {} });
       pendingUserData = null;
+      // 유형 2는 경험을 먼저 정리하는 흐름으로 진입합니다.
+      // 유형 1과 기존 사용자에게 보이는 홈/헤더 로직은 변경하지 않습니다.
+      if (completedType === 2) {
+        window.location.assign("modules/record/index.html?tab=extract");
+        return;
+      }
       renderPage();
       if (typeof renderHeader === "function") renderHeader();
       // STEP 5 대시보드도 새 사용자의 데이터를 즉시 표시합니다.

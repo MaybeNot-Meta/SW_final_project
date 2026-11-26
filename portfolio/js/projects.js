@@ -15,7 +15,9 @@
   const $projects = document.getElementById('project-list');
   const $projectCount = document.getElementById('project-count');
 
-  const state = { tag: '', query: '', justCreated: null };
+  // 기록 목록에서 바로 생성된 프로젝트가 도착 후 강조되도록 합니다.
+  const requestedProject = new URLSearchParams(window.location.search).get('project');
+  const state = { tag: '', query: '', justCreated: requestedProject };
   let sortables = [];
 
   /* ---------- 그리기 ---------- */
@@ -78,7 +80,11 @@
         <button type="button" class="pf-btn pf-btn--primary" data-add-project><i data-lucide="plus"></i>새 프로젝트 만들기</button></div>`;
       return;
     }
-    $projects.innerHTML = projects.slice().reverse().map((p) => {
+    const arrived = projects.find(project => project.id === state.justCreated);
+    const arrivedNote = arrived
+      ? `<p class="pf-created-notice" role="status"><strong>프로젝트가 준비됐어요.</strong> 아래 강조된 프로젝트의 제목을 눌러 이름을 수정할 수 있어요.</p>`
+      : "";
+    $projects.innerHTML = arrivedNote + projects.slice().reverse().map((p) => {
       const recs = recordsOf(p, records);
       const rep = tagCounts(recs);
       const st = starStatus(p);

@@ -63,11 +63,12 @@
             </div>
             <div class="question-list" id="questionList"></div>
           </div>
+            <p class="extract-tag-intro">경험을 작성하면 역량 태그를 추천해요. <strong>각 경험에서 직접 선택·수정</strong>할 수 있으며, 선택한 태그가 직무 매칭에 반영돼요.</p>
           <div class="experience-input-list" id="experienceInputList"></div>
           <button class="secondary-button add-experience-button" id="addExperienceButton" type="button"><i data-lucide="plus"></i>경험 추가하기</button>
           <div class="guide-actions">
             <button class="secondary-button" id="startRecord"><i data-lucide="pen-line"></i>기록 작성으로 이동</button>
-            <span class="experience-count" id="experienceCount">0 / 3 경험 입력</span>
+            <span class="experience-count" id="experienceCount" role="status" aria-live="polite">0 / 3 경험 입력</span>
             <button class="primary-button" id="jobMatchButton" disabled><i data-lucide="route"></i>직무 매칭</button>
           </div>
         </div>
@@ -101,7 +102,7 @@
             <div class="editor-heading">
               <span class="step-label">STEP 2</span>
               <h2 id="editorTitle">새 경험 기록</h2>
-              <span class="save-status" id="saveStatus"><i data-lucide="cloud"></i>임시저장 완료</span>
+              <span class="save-status" id="saveStatus" role="status" aria-live="polite"><i data-lucide="cloud"></i>임시저장 전</span>
             </div>
             <form id="recordForm">
               <div class="field-row">
